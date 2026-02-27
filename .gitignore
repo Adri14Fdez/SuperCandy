@@ -1,0 +1,13 @@
+# Visual Studio temporales
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.aps
+*.opendb
+*.pdb
+
+# Otros archivos de compilación
+Makefile
+CMakeCache.txt
+CMakeFiles/
