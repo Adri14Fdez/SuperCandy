@@ -90,6 +90,10 @@ public:
 private:
 
     /// Students can add as many protected methods and attributes as needed.
+
+    int boardX = DEFAULT_BOARD_WIDTH;
+    int boardY = DEFAULT_BOARD_HEIGHT;
+
 };
 
 #endif
