@@ -5,11 +5,13 @@
 Board::Board(int width, int height)
 {
     // Implement your code here
-    for (int i = 0; i < height; i++)
+    boardX = width;
+    boardY = height;
+    for (int x = 0; x < width; x++)
     {
-        for (int j = 0; j < width; j++)
+        for (int y = 0; y < height; y++)
         {
-            grid[i][j] = nullptr;
+            grid[x][y] = nullptr;
         }
     }
 }
@@ -23,15 +25,19 @@ Board::~Board()
 Candy* Board::getCell(int x, int y) const
 {
     // Implement your code here
-
+    if (x >= 0 && x < boardX
+        && y >= 0 && y < boardY)
+    {
+        return grid[x][y];
+    }
     return nullptr;
 }
 
 void Board::setCell(Candy* candy, int x, int y)
 {
     // Implement your code here
-    if (x > 0 && x < boardX
-        && y > 0 && y < boardY)
+    if (x >= 0 && x < boardX
+        && y >= 0 && y < boardY)
     {
         grid[x][y] = candy;
     }

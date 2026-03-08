@@ -6,12 +6,18 @@
 #include "util.h"
 
 bool test() {
-    Board miTablero(10, 10);
+    Board b(10, 10);
 
-    if (miTablero.getWidth() != 10) {
+    if (b.getWidth() != 10) {
         return false;
     }
-    if (miTablero.getHeight() != 10) {
+    if (b.getHeight() != 10) {
+        return false;
+    }
+
+    Candy c(CandyType::TYPE_ORANGE);
+    b.setCell(&c, 0, 0);
+    if (b.getCell(0, 0) != &c) {
         return false;
     }
 
