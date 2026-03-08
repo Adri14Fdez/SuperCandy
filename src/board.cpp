@@ -5,6 +5,13 @@
 Board::Board(int width, int height)
 {
     // Implement your code here
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            grid[i][j] = nullptr;
+        }
+    }
 }
 
 Board::~Board()
@@ -23,6 +30,11 @@ Candy* Board::getCell(int x, int y) const
 void Board::setCell(Candy* candy, int x, int y)
 {
     // Implement your code here
+    if (x > 0 && x < boardX
+        && y > 0 && y < boardY)
+    {
+        grid[x][y] = candy;
+    }
 }
 
 

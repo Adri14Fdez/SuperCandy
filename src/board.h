@@ -93,7 +93,7 @@ private:
 
     int boardX = DEFAULT_BOARD_WIDTH;
     int boardY = DEFAULT_BOARD_HEIGHT;
-
+    Candy* grid[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT];
 };
 
 #endif
