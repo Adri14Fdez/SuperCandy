@@ -11,6 +11,7 @@ Board::Board(int width, int height)
     {
         for (int y = 0; y < height; y++)
         {
+            //Inicializa la array para que esté vacía.
             grid[x][y] = nullptr;
         }
     }
@@ -28,6 +29,7 @@ Candy* Board::getCell(int x, int y) const
     if (x >= 0 && x < boardX
         && y >= 0 && y < boardY)
     {
+        //Devuelve la celda de grid solo si las coordenadas son válidas.
         return grid[x][y];
     }
     return nullptr;
@@ -39,6 +41,7 @@ void Board::setCell(Candy* candy, int x, int y)
     if (x >= 0 && x < boardX
         && y >= 0 && y < boardY)
     {
+        //Acualiza la celda solo si las coordenadas son válidas.
         grid[x][y] = candy;
     }
 }

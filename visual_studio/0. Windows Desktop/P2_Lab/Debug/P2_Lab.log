@@ -1,4 +1,2 @@
-﻿  board.cpp
-  test.cpp
-  Generando código...
-  P2_Lab.vcxproj -> F:\UNIVERSIDAD\1o\Programacion1y2\ProyectoP2\ProyectoDrCandyP2\visual_studio\0. Windows Desktop\Program\P2_Lab.exe
+﻿  test.cpp
+F:\UNIVERSIDAD\1o\Programacion1y2\ProyectoP2\ProyectoDrCandyP2\test\test.cpp(11,11): error C2228: el operando izquierdo de '.getWidth' debe tener class/struct/union
