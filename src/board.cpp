@@ -191,7 +191,66 @@ bool Board::shouldExplode(int x, int y) const
 std::vector<Candy*> Board::explodeAndDrop()
 {
     // Implement your code here
-    return {};
+    // Hacemos un vector para ir guardando los caramelos que hemos explotado.
+    vector<Candy*> explotados;
+    do
+    {
+        int contador = 0;
+        // Lista para guardar las posiciones que se explotaran posteriormente.
+        bool lista[boardX][boardY];
+        for (int x = 0; x < boardX; x++)
+        {
+            for (int y = 0; y < boardY; y++)
+            {
+                // Si puede explotar lo guardamos en la lista.
+                if (shouldExplode(x,y))
+                {
+                    lista[x][y] = true;
+                }
+            }
+        }
+
+        
+        for (int x = 0; x < boardX; x++)
+        {
+            for (int y = 0; y < boardY; y++)
+            {
+                // Recorremos el tablero y si alguna casilla puede explotar, añadimos el caramelo
+                // a la lista de explotados y vaciamos la casilla. Sumando 1 al contador para que
+                // posteriormente se vuelva a comprobar posibles reacciones en cadena.
+                if (lista[x][y])
+                {
+                    explotados.push_back(getCell(x,y));
+                    setCell(nullptr, x, y);
+                    contador++;
+                }
+            }
+        }
+        
+        for (int x = 0; x < boardX - 1; x++)
+        {
+            for (int y = boardY - 1; y > 0; y++)
+            {
+                // Comprobamos cada columna de abajo a arriba hasta encontrar una casilla vacia.
+                if (getCell(x,y) = nullptr)
+                {
+                    // Una vez encontrada buscamos una casilla NO vacia encima de esa.
+                    for (int k = y - 1; k > 0; k++)
+                    {
+                        // Si se encuentra, bajamos el caramelo y vaciamos la casilla donde estaba.
+                        if(getCell(x,k) != nullptr)
+                        {
+                            setCell(getCell(x,k), x, y);
+                            setCell(nullptr, x, k);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        //Si se ha explotado algo, volvemos a comprobar.
+    } while (contador != 0);
+    return explotados;
 }
 
 // NUEVA FUNCION: Devuelve un string con el tipo de caramelo 
@@ -208,6 +267,18 @@ std::string tipoAString(CandyType type)
     case CandyType::TYPE_YELLOW: return "YELLOW";
     default:                     return "UNKNOWN";
     }
+}
+
+//La funcion deshace el cambio para poder leerlo en el tablero.
+CandyType stringATipo(string type)
+{
+    if (type == "BLUE") return CandyType::TYPE_BLUE;
+    else if (type == "GREEN") return CandyType::TYPE_GREEN;
+    else if (type == "ORANGE") return CandyType::TYPE_ORANGE;
+    else if (type == "PURPLE") return CandyType::TYPE_PURPLE;
+    else if (type == "RED") return CandyType::TYPE_RED;
+    else if (type == "YELLOW") return CandyType::TYPE_YELLOW;
+    else return CandyType::COUNT;
 }
 
 bool Board::dump(const std::string& output_path) const
@@ -243,5 +314,35 @@ bool Board::dump(const std::string& output_path) const
 bool Board::load(const std::string& input_path)
 {
     // Implement your code here
-    return false;
+    ifstream boardLoad(input_path);
+    // Solo se ejecuta si se ha podido abrir bien el archivo.
+    if (boardLoad)
+    {
+        for (int c = 0; c < boardX; c++) {
+            for (int f = 0; f < boardY; f++) {
+                setCell(nullptr, c, f);
+            }
+        }
+
+        string tipoStr;
+        int c;
+        int f;
+
+        //El bucle se repite mientras queden lineas por leer.
+        while (boardLoad >> tipoStr >> c >> f) {
+            CandyType tipoEnum = stringATipo(tipoStr); //devuelve el tipo del caramelo
+            // El "new" hace que no se destruya el objeto al salir del bucle.
+            Candy* nuevoCaramelo = new Candy(tipoEnum);
+            setCell(nuevoCaramelo, c, f);
+        }
+
+        boardLoad.close();
+        return true;
+
+    }
+    else 
+    {
+        cout << "Error de apertura del archivo." << endl;
+        return false;
+    }
 }
