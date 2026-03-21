@@ -1,13 +1,36 @@
-# Visual Studio temporales
 .vs/
+Debug/
+Release/
+x64/
+x86/
 [Bb]in/
 [Oo]bj/
+
+out/
+build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
 *.user
 *.aps
 *.opendb
-*.pdb
+*.db
+*.suo
+*.sln.docstates
 
-# Otros archivos de compilación
-Makefile
-CMakeCache.txt
-CMakeFiles/
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.log
+*.lastbuildstate
+*.recipe
+*.iobj
+*.ipdb
+
+.DS_Store
+Thumbs.db
