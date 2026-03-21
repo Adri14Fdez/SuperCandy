@@ -117,10 +117,10 @@ bool test() {
                 Candy* carameloRojo1 = new Candy(CandyType::TYPE_RED);
                 Candy* carameloRojo2 = new Candy(CandyType::TYPE_RED);
                 Candy* carameloRojo3 = new Candy(CandyType::TYPE_RED);
-                tableroSEV.setCell(carameloRojo1, 2, 9);
-                tableroSEV.setCell(carameloRojo2, 3, 9);
-                tableroSEV.setCell(carameloRojo3, 4, 9);
-                if (tableroSEV.shouldExplode(9, 2) && tableroSEV.shouldExplode(9, 3) && tableroSEV.shouldExplode(9, 4))
+                tableroSEV.setCell(carameloRojo1, 3, 4);
+                tableroSEV.setCell(carameloRojo2, 3, 5);
+                tableroSEV.setCell(carameloRojo3, 3, 6);
+                if (tableroSEV.shouldExplode(3, 4) && tableroSEV.shouldExplode(3, 5) && tableroSEV.shouldExplode(3, 6))
                 {
                     cout << "shouldExplode funciona en casos validos verticales." << endl;
                 }
@@ -137,10 +137,10 @@ bool test() {
                 Candy* carameloRojo1 = new Candy(CandyType::TYPE_RED);
                 Candy* carameloRojo2 = new Candy(CandyType::TYPE_RED);
                 Candy* carameloRojo3 = new Candy(CandyType::TYPE_RED);
-                tableroSED.setCell(carameloRojo1, 2, 9);
-                tableroSED.setCell(carameloRojo2, 3, 9);
+                tableroSED.setCell(carameloRojo1, 2, 7);
+                tableroSED.setCell(carameloRojo2, 3, 8);
                 tableroSED.setCell(carameloRojo3, 4, 9);
-                if (tableroSED.shouldExplode(2, 9) && tableroSED.shouldExplode(3, 8) && tableroSED.shouldExplode(4, 7))
+                if (tableroSED.shouldExplode(2, 7) && tableroSED.shouldExplode(3, 8) && tableroSED.shouldExplode(4, 9))
                 {
                     cout << "shouldExplode funciona en casos validos diagonales." << endl;
                 }
@@ -251,40 +251,54 @@ bool test() {
         // Caso valido.
         {
             // Creamos un tablero y le añadimos caramelos.
-            Board tableroDL;
+            Board tableroDL(10, 10);
             Candy* c1 = new Candy(CandyType::TYPE_RED);
             Candy* c2 = new Candy(CandyType::TYPE_GREEN);
-            tableroDL.setCell(c1, 6, 7);
-            tableroDL.setCell(c2, 8, 9);
+            tableroDL.setCell(c1, 2, 3);
+            tableroDL.setCell(c2, 3, 3);
+
+            string inputPath = getDataDirPath() + "test_dump.txt";
 
             // Exportamos el tablero.
-            tableroDL.dump("test_dump.txt");
+            tableroDL.dump(inputPath);
 
             // Creamos un nuevo tablero cargando el anterior.
-            Board tableroDL2;
-            tableroDL2.load("test_dump.txt");
+            Board tableroDL2(10, 10);
+            tableroDL2.load(inputPath);
 
             // Comprobamos que los caramelos se han cargado correctamente.
-            if (tableroDL2.getCell(6, 7) == nullptr || 
-                tableroDL2.getCell(8, 9) == nullptr ||
-                tableroDL.getCell(6, 7)->getType() != tableroDL2.getCell(6, 7)->getType() || 
-                tableroDL.getCell(8, 9)->getType() != tableroDL2.getCell(8, 9)->getType())
+            if (tableroDL2.getCell(2, 2) == nullptr)
             {
-                cout << "dump y load fallan al guardar." << endl;
+                cout << "dump y load fallan porque el caramelo ROJO no se cargo en tableroDL2." << endl;
                 resultado = false;
-            } else
+            } 
+            else if (tableroDL2.getCell(3, 3) == nullptr)
+            {
+                cout << "dump y load fallan porque el caramelo VERDE no se cargo en tableroDL2." << endl;
+                resultado = false;
+            } 
+            else if (tableroDL.getCell(2, 2)->getType() != tableroDL2.getCell(2, 2)->getType())
+            {
+                cout << "dump y load fallan porque el ROJO cambio de tipo al cargarse." << endl;
+                resultado = false;
+            } 
+            else if (tableroDL.getCell(3, 3)->getType() != tableroDL2.getCell(3, 3)->getType())
+            {
+                cout << "dump y load fallan porque el VERDE cambio de tipo al cargarse." << endl;
+                resultado = false;
+            } 
+            else
             {
                 cout << "dump y load funcionan al guardar." << endl;
             }
-
-            // Borramos los caramelos.
-            delete c1;
-            delete c2;
         }
         // Caso invalido.
         {
-            Board tableroDL;
-            if (tableroDL.load("noExiste.txt") == true)
+            Board tableroDL(10, 10);
+
+            string inputPath = getDataDirPath() + "noExiste.txt";
+
+            if (tableroDL.load(inputPath) == true)
             {
                 cout << "dump y load fallan al cargar." << endl;
                 resultado = false;

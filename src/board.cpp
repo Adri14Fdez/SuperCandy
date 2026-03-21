@@ -246,7 +246,7 @@ std::vector<Candy*> Board::explodeAndDrop()
                 if (getCell(x,y) == nullptr)
                 {
                     // Una vez encontrada buscamos una casilla NO vacia encima de esa.
-                    for (int k = y - 1; k > 0; k--)
+                    for (int k = y - 1; k >= 0; k--)
                     {
                         // Si se encuentra, bajamos el caramelo y vaciamos la casilla donde estaba.
                         if(getCell(x,k) != nullptr)
@@ -345,8 +345,10 @@ bool Board::load(const std::string& input_path)
         //El bucle se repite mientras queden lineas por leer.
         while (boardLoad >> tipoStr >> c >> f) {
             CandyType tipoEnum = stringATipo(tipoStr); //devuelve el tipo del caramelo
-            Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
-            setCell(nuevoCaramelo, c, f);
+            if (tipoEnum != CandyType::COUNT) {
+                Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
+                setCell(nuevoCaramelo, c, f);
+            }
         }
 
         boardLoad.close();
