@@ -7,7 +7,7 @@
 #include "util.h"
 
 bool test() {
-    bool resultado = true;
+    bool todoCorrecto = true;
 
     // Test getters tablero
     {
@@ -16,12 +16,12 @@ bool test() {
         if (tableroGHGW.getHeight() != 10)
         {
             cout << "Fallo en getHeight." << endl;
-            resultado = false;
+            todoCorrecto = false;
         }
         else if (tableroGHGW.getWidth() != 10)
         {
             cout << "Fallo en getWidth." << endl;
-            resultado = false;
+            todoCorrecto = false;
         }
         else
         {
@@ -46,7 +46,7 @@ bool test() {
             else
             {
                 cout << "setCell y getCell fallan en casos validos." << endl;
-                resultado = false;
+                todoCorrecto = false;
             }
         }
         cout << "--------------------------------------------------" << endl;
@@ -65,7 +65,7 @@ bool test() {
             else
             {
                 cout << "setCell y getCell fallan en casos invalidos negativos." << endl;
-                resultado = false;
+                todoCorrecto = false;
             }
 
             // Mayores
@@ -77,7 +77,7 @@ bool test() {
             else
             {
                 cout << "setCell y getCell fallan en casos invalidos mayores." << endl;
-                resultado = false;
+                todoCorrecto = false;
             }
 
             // Como no se llega a cargar, no se eliminara con el destructor por lo que lo eliminamos manualmente.
@@ -107,7 +107,7 @@ bool test() {
                 else
                 {
                     cout << "shouldExplode falla en casos validos horizontales." << endl;
-                    resultado = false;
+                    todoCorrecto = false;
                 }
             }
             // Vertical
@@ -127,10 +127,10 @@ bool test() {
                 else
                 {
                     cout << "shouldExplode falla en casos validos verticales." << endl;
-                    resultado = false;
+                    todoCorrecto = false;
                 }
             }
-            // Diagonal
+            // Diagonal (\)
             {
                 Board tableroSED(10, 10);
 
@@ -142,12 +142,32 @@ bool test() {
                 tableroSED.setCell(carameloRojo3, 4, 9);
                 if (tableroSED.shouldExplode(2, 7) && tableroSED.shouldExplode(3, 8) && tableroSED.shouldExplode(4, 9))
                 {
-                    cout << "shouldExplode funciona en casos validos diagonales." << endl;
+                    cout << "shouldExplode funciona en casos validos diagonal (\\)." << endl;
                 }
                 else
                 {
-                    cout << "shouldExplode falla en casos validos diagonales." << endl;
-                    resultado = false;
+                    cout << "shouldExplode falla en casos validos diagonal (\\)." << endl;
+                    todoCorrecto = false;
+                }
+            }
+            // Diagonal (/)
+            {
+                Board tableroSED(10, 10);
+
+                Candy* carameloRojo1 = new Candy(CandyType::TYPE_RED);
+                Candy* carameloRojo2 = new Candy(CandyType::TYPE_RED);
+                Candy* carameloRojo3 = new Candy(CandyType::TYPE_RED);
+                tableroSED.setCell(carameloRojo1, 1, 9);
+                tableroSED.setCell(carameloRojo2, 2, 8);
+                tableroSED.setCell(carameloRojo3, 3, 7);
+                if (tableroSED.shouldExplode(1, 9) && tableroSED.shouldExplode(2, 8) && tableroSED.shouldExplode(3, 7))
+                {
+                    cout << "shouldExplode funciona en casos validos diagonal (/)." << endl;
+                }
+                else
+                {
+                    cout << "shouldExplode falla en casos validos diagonal (/)." << endl;
+                    todoCorrecto = false;
                 }
             }
 
@@ -162,7 +182,7 @@ bool test() {
                 if (tableroSECV.shouldExplode(0, 0))
                 {
                     cout << "shouldExplode falla en casos invalidos con coordenada vacia." << endl;
-                    resultado = false;
+                    todoCorrecto = false;
                 }
                 else {
                     cout << "shouldExplode funciona en casos invalidos con coordenada vacia." << endl;
@@ -188,7 +208,7 @@ bool test() {
                 if (tableroSECR.shouldExplode(5, 5))
                 {
                     cout << "shouldExplode falla en casos invalidos con caramelo rodeado de otros caramelos." << endl;
-                    resultado = false;
+                    todoCorrecto = false;
                 }
                 else {
                     cout << "shouldExplode funciona en casos invalidos con caramelo rodeado de otros caramelos." << endl;
@@ -223,7 +243,7 @@ bool test() {
         if (destruidos.size() != 3)
         {
             cout << "explodeAndDrop falla porque el vector devuelto no tiene 3 elementos (tiene " << destruidos.size() << ")." << endl;
-            resultado = false;
+            todoCorrecto = false;
         }
 
         // Comprobamos que las posiciones destruidas han quedado ocupadas por los caramelos que caian 
@@ -232,7 +252,7 @@ bool test() {
             || tableroEAD.getCell(5, 8) != nullptr || tableroEAD.getCell(6, 8) != nullptr)
         {
             cout << "explodeAndDrop falla porque los caramelos no han caido correctamente." << endl;
-            resultado = false;
+            todoCorrecto = false;
         } else
         {
             cout << "explodeAndDrop funciona correctamente." << endl;
@@ -258,7 +278,7 @@ bool test() {
             tableroDL.setCell(c2, 8, 9);
 
             // Exportamos el tablero.
-            string inputPath = getDataDirPath() + "test_dump.txt";
+            string inputPath = getDataDirPath() + "/test_dump.txt";
             tableroDL.dump(inputPath);
 
             // Creamos un nuevo tablero cargando el anterior.
@@ -272,7 +292,7 @@ bool test() {
                 tableroDL.getCell(8, 9)->getType() != tableroDL2.getCell(8, 9)->getType())
             {
                 cout << "dump y load fallan al guardar." << endl;
-                resultado = false;
+                todoCorrecto = false;
             }
             else
             {
@@ -283,13 +303,13 @@ bool test() {
         {
             Board tableroDL(10, 10);
 
-            string inputPath = getDataDirPath() + "noExiste.txt";
+            string inputPath = getDataDirPath() + "/noExiste.txt";
 
             // Intentamos cargar un archivo que no existe
             if (tableroDL.load(inputPath) == true)
             {
                 cout << "dump y load fallan al cargar." << endl;
-                resultado = false;
+                todoCorrecto = false;
             }
             else
             {
@@ -298,5 +318,6 @@ bool test() {
         }
     }
     cout << "--------------------------------------------------" << endl;
-    return resultado;
+
+    return todoCorrecto;
 }
