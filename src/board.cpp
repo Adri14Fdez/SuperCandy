@@ -82,7 +82,7 @@ bool Board::shouldExplode(int x, int y) const
         // Eje X izq
         compX = x - 1;
         vecino = getCell(compX, y);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compX--;
             vecino = getCell(compX, y);
@@ -91,7 +91,7 @@ bool Board::shouldExplode(int x, int y) const
         // Eje X der
         compX = x + 1;
         vecino = getCell(compX, y);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compX++;
             vecino = getCell(compX, y);
@@ -110,7 +110,7 @@ bool Board::shouldExplode(int x, int y) const
         // Eje Y arriba
         compY = y - 1;
         vecino = getCell(x, compY);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compY--;
             vecino = getCell(x, compY);
@@ -119,7 +119,7 @@ bool Board::shouldExplode(int x, int y) const
         // Eje Y abajo
         compY = y + 1;
         vecino = getCell(x, compY);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compY++;
             vecino = getCell(x, compY);
@@ -139,7 +139,7 @@ bool Board::shouldExplode(int x, int y) const
         compX = x - 1;
         compY = y - 1;
         vecino = getCell(compX, compY);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compX--;
             compY--;
@@ -150,7 +150,7 @@ bool Board::shouldExplode(int x, int y) const
         compX = x + 1;
         compY = y + 1;
         vecino = getCell(compX, compY);
-        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
             contador++;
             compX++;
             compY++;
@@ -246,7 +246,7 @@ std::vector<Candy*> Board::explodeAndDrop()
                 if (getCell(x,y) == nullptr)
                 {
                     // Una vez encontrada buscamos una casilla NO vacia encima de esa.
-                    for (int k = y - 1; k > 0; k++)
+                    for (int k = y - 1; k > 0; k--)
                     {
                         // Si se encuentra, bajamos el caramelo y vaciamos la casilla donde estaba.
                         if(getCell(x,k) != nullptr)
