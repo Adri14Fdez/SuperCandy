@@ -93,7 +93,7 @@ private:
 
     int boardX = DEFAULT_BOARD_WIDTH;
     int boardY = DEFAULT_BOARD_HEIGHT;
-    // "grid" es una array bidimensional donde se guarda que candy hay en cada posición.
+    // "grid" es una array bidimensional donde se guarda la dirreccion del candy que hay en cada posición.
     Candy* grid[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT];
 };
 

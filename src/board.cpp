@@ -6,14 +6,13 @@ using namespace std;
 
 Board::Board(int width, int height)
 {
-    // Implement your code here
     boardX = width;
     boardY = height;
     for (int x = 0; x < width; x++)
     {
         for (int y = 0; y < height; y++)
         {
-            //Inicializa la array para que esté vacía.
+            // Inicializa la array para que esté vacía.
             grid[x][y] = nullptr;
         }
     }
@@ -21,17 +20,22 @@ Board::Board(int width, int height)
 
 Board::~Board()
 {
-    // Implement your code here
+    // Borramos todos los caramelos que queden en el tablero.
+    for (int c = 0; c < boardX; c++) {
+        for (int f = 0; f < boardY; f++) {
+            Candy* actual = getCell(c,f);
+            if (actual != nullptr) {
+                delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+            }
+        }
+    }
 }
-
 
 Candy* Board::getCell(int x, int y) const
 {
-    // Implement your code here
-    if (x >= 0 && x < boardX
-        && y >= 0 && y < boardY)
+    // Devuelve la celda de grid solo si las coordenadas son válidas.
+    if (x >= 0 && x < boardX && y >= 0 && y < boardY)
     {
-        //Devuelve la celda de grid solo si las coordenadas son válidas.
         return grid[x][y];
     }
     return nullptr;
@@ -39,165 +43,172 @@ Candy* Board::getCell(int x, int y) const
 
 void Board::setCell(Candy* candy, int x, int y)
 {
-    // Implement your code here
-    if (x >= 0 && x < boardX
-        && y >= 0 && y < boardY)
+    // Acualiza la celda solo si las coordenadas son válidas.
+    if (x >= 0 && x < boardX && y >= 0 && y < boardY)
     {
-        //Acualiza la celda solo si las coordenadas son válidas.
         grid[x][y] = candy;
     }
 }
 
-
 int Board::getWidth() const
 {
-    // Implement your code here
     return boardX;
 }
 
-
 int Board::getHeight() const
 {
-    // Implement your code here
     return boardY;
 }
 
 bool Board::shouldExplode(int x, int y) const
 {
-    // Implement your code here
-
-    Candy* origen = getCell(x, y); //si el caramelo es caramelo vacio salimos
+    // Si el caramelo es caramelo vacio no hace falta comprobar si explota.
+    Candy* origen = getCell(x, y);
     if (origen == nullptr) {
         return false;
     }
 
-    CandyType tipoOrigen = origen->getType(); //guardamos el tipo del caramelo
-    int contador = 1; //no contar el del centro
+    // Guardamos el tipo del caramelo y contamos 1 en cada eje por el caramelo del centro.
+    CandyType tipoOrigen = origen->getType();
+    int contador;
     int compX = 0;
     int compY = 0;
     Candy* vecino = nullptr;
+    
+    // Eje X
+    {
+        contador = 1;
 
-    //Eje X
-
-    //izq
-    compX = x - 1;
-    vecino = getCell(compX, y);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++; //va comprobando si son del mismo tipo hacia la izquierda
-        compX--;
+        // Eje X izq
+        compX = x - 1;
         vecino = getCell(compX, y);
-    }
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compX--;
+            vecino = getCell(compX, y);
+        }
 
-    //der
-    compX = x + 1;
-    vecino = getCell(compX, y);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++; //va comprobando si son del mismo tipo hacia la derecha
-        compX++;
+        // Eje X der
+        compX = x + 1;
         vecino = getCell(compX, y);
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compX++;
+            vecino = getCell(compX, y);
+        }
+
+        // Todos los del mismo tipo se guardan en contador para saber si deberían explotar
+        if (contador >= SHORTEST_EXPLOSION_LINE) {
+            return true;
+        }
     }
 
-    //todos los del mismo tipo se guardan en contador para saber si deberían explotar
-
-    if (contador >= SHORTEST_EXPLOSION_LINE) {
-        return true;
-    }
-
-    //Eje Y
-    contador = 1;
-
-    //arriba
-    compY = y - 1;
-    vecino = getCell(x, compY);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++;
-        compY--;
+    // Eje Y
+    {
+        contador = 1;
+        
+        // Eje Y arriba
+        compY = y - 1;
         vecino = getCell(x, compY);
-    }
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compY--;
+            vecino = getCell(x, compY);
+        }
 
-    //abajo
-    compY = y + 1;
-    vecino = getCell(x, compY);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++;
-        compY++;
+        // Eje Y abajo
+        compY = y + 1;
         vecino = getCell(x, compY);
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compY++;
+            vecino = getCell(x, compY);
+        }
+
+        // Todos los del mismo tipo se guardan en contador para saber si deberían explotar
+        if (contador >= SHORTEST_EXPLOSION_LINE) {
+            return true;
+        }
     }
+    
+    // Eje Diagonal (\) 
+    {
+        contador = 1;
 
-    if (contador >= SHORTEST_EXPLOSION_LINE) {
-        return true;
-    }
-
-    //Eje ArribaIzq -> AbajoDer
-    contador = 1;
-
-    //ArribaIzq
-    compX = x - 1;
-    compY = y - 1;
-    vecino = getCell(compX, compY);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++;
-        compX--;
-        compY--;
+        //ArribaIzq
+        compX = x - 1;
+        compY = y - 1;
         vecino = getCell(compX, compY);
-    }
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compX--;
+            compY--;
+            vecino = getCell(compX, compY);
+        }
 
-    //AbajoDer
-    compX = x + 1;
-    compY = y + 1;
-    vecino = getCell(compX, compY);
-    while (vecino != nullptr and vecino->getType() == tipoOrigen) {
-        contador++;
-        compX++;
-        compY++;
+        //AbajoDer
+        compX = x + 1;
+        compY = y + 1;
         vecino = getCell(compX, compY);
+        while (vecino != nullptr and vecino->getType() == tipoOrigen) {
+            contador++;
+            compX++;
+            compY++;
+            vecino = getCell(compX, compY);
+        }
+
+        // Todos los del mismo tipo se guardan en contador para saber si deberían explotar
+        if (contador >= SHORTEST_EXPLOSION_LINE) {
+            return true;
+        }
     }
 
-    if (contador >= SHORTEST_EXPLOSION_LINE) {
-        return true;
-    }
+    // Eje Diagonal (/)
+    {
+        contador = 1;
 
-    //Eje AbajoIzq -> ArribaDer
-    contador = 1;
-
-    //AbajoIzq
-    compX = x - 1;
-    compY = y + 1;
-    vecino = getCell(compX, compY);
-    while (vecino != nullptr && vecino->getType() == tipoOrigen) {
-        contador++;
-        compX--; compY++;
+        //AbajoIzq
+        compX = x - 1;
+        compY = y + 1;
         vecino = getCell(compX, compY);
-    }
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
+            contador++;
+            compX--; compY++;
+            vecino = getCell(compX, compY);
+        }
 
-    //ArribaDer
-    compX = x + 1;
-    compY = y - 1;
-    vecino = getCell(compX, compY);
-    while (vecino != nullptr && vecino->getType() == tipoOrigen) {
-        contador++;
-        compX++; compY--;
+        //ArribaDer
+        compX = x + 1;
+        compY = y - 1;
         vecino = getCell(compX, compY);
+        while (vecino != nullptr && vecino->getType() == tipoOrigen) {
+            contador++;
+            compX++; compY--;
+            vecino = getCell(compX, compY);
+        }
+
+        // Todos los del mismo tipo se guardan en contador para saber si deberían explotar
+        if (contador >= SHORTEST_EXPLOSION_LINE) {
+            return true;
+        }
     }
 
-    if (contador >= SHORTEST_EXPLOSION_LINE) {
-        return true;
-    }
-
-    //Si el contador no ha llegado minimo hasta 3 en todos los ejes significa que no tiene que explotar
+    // Si el contador no ha llegado minimo hasta SHORTEST_EXPLOSION_LINE
+    // en todos los ejes significa que no tiene que explotar.
     return false;
 }
 
 std::vector<Candy*> Board::explodeAndDrop()
 {
-    // Implement your code here
     // Hacemos un vector para ir guardando los caramelos que hemos explotado.
     vector<Candy*> explotados;
+    int contador;
+
     do
     {
-        int contador = 0;
+        contador = 0;
         // Lista para guardar las posiciones que se explotaran posteriormente.
-        bool lista[boardX][boardY];
+        bool lista[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT] = {false};
         for (int x = 0; x < boardX; x++)
         {
             for (int y = 0; y < boardY; y++)
@@ -227,12 +238,12 @@ std::vector<Candy*> Board::explodeAndDrop()
             }
         }
         
-        for (int x = 0; x < boardX - 1; x++)
+        for (int x = 0; x < boardX; x++)
         {
-            for (int y = boardY - 1; y > 0; y++)
+            for (int y = boardY - 1; y > 0; y--)
             {
                 // Comprobamos cada columna de abajo a arriba hasta encontrar una casilla vacia.
-                if (getCell(x,y) = nullptr)
+                if (getCell(x,y) == nullptr)
                 {
                     // Una vez encontrada buscamos una casilla NO vacia encima de esa.
                     for (int k = y - 1; k > 0; k++)
@@ -249,7 +260,7 @@ std::vector<Candy*> Board::explodeAndDrop()
             }
         }
         //Si se ha explotado algo, volvemos a comprobar.
-    } while (contador != 0);
+    } while (contador > 0);
     return explotados;
 }
 
@@ -283,7 +294,6 @@ CandyType stringATipo(string type)
 
 bool Board::dump(const std::string& output_path) const
 {
-    // Implement your code here
     ofstream boardSave(output_path);
     // Solo se ejecuta si se ha podido abrir bien el archivo.
     if (boardSave)
@@ -313,13 +323,17 @@ bool Board::dump(const std::string& output_path) const
 
 bool Board::load(const std::string& input_path)
 {
-    // Implement your code here
     ifstream boardLoad(input_path);
     // Solo se ejecuta si se ha podido abrir bien el archivo.
     if (boardLoad)
     {
+        // Borramos todo lo que habia en el tablero.
         for (int c = 0; c < boardX; c++) {
             for (int f = 0; f < boardY; f++) {
+                Candy* actual = getCell(c,f);
+                if (actual != nullptr) {
+                    delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+                }
                 setCell(nullptr, c, f);
             }
         }
@@ -331,14 +345,12 @@ bool Board::load(const std::string& input_path)
         //El bucle se repite mientras queden lineas por leer.
         while (boardLoad >> tipoStr >> c >> f) {
             CandyType tipoEnum = stringATipo(tipoStr); //devuelve el tipo del caramelo
-            // El "new" hace que no se destruya el objeto al salir del bucle.
-            Candy* nuevoCaramelo = new Candy(tipoEnum);
+            Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
             setCell(nuevoCaramelo, c, f);
         }
 
         boardLoad.close();
         return true;
-
     }
     else 
     {
