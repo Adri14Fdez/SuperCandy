@@ -270,26 +270,27 @@ std::string tipoAString(CandyType type)
 {
     switch (type)
     {
-    case CandyType::TYPE_BLUE:   return "BLUE";
-    case CandyType::TYPE_GREEN:  return "GREEN";
-    case CandyType::TYPE_ORANGE: return "ORANGE";
-    case CandyType::TYPE_PURPLE: return "PURPLE";
-    case CandyType::TYPE_RED:    return "RED";
-    case CandyType::TYPE_YELLOW: return "YELLOW";
-    default:                     return "UNKNOWN";
+        case CandyType::TYPE_BLUE:   return "BLUE";
+        case CandyType::TYPE_GREEN:  return "GREEN";
+        case CandyType::TYPE_ORANGE: return "ORANGE";
+        case CandyType::TYPE_PURPLE: return "PURPLE";
+        case CandyType::TYPE_RED:    return "RED";
+        case CandyType::TYPE_YELLOW: return "YELLOW";
+        default:                     return "UNKNOWN";
     }
 }
 
 //La funcion deshace el cambio para poder leerlo en el tablero.
-CandyType stringATipo(string type)
+CandyType stringATipo(const string& type)
 {
     if (type == "BLUE") return CandyType::TYPE_BLUE;
-    else if (type == "GREEN") return CandyType::TYPE_GREEN;
-    else if (type == "ORANGE") return CandyType::TYPE_ORANGE;
-    else if (type == "PURPLE") return CandyType::TYPE_PURPLE;
-    else if (type == "RED") return CandyType::TYPE_RED;
-    else if (type == "YELLOW") return CandyType::TYPE_YELLOW;
-    else return CandyType::COUNT;
+    if (type == "GREEN") return CandyType::TYPE_GREEN;
+    if (type == "ORANGE") return CandyType::TYPE_ORANGE;
+    if (type == "PURPLE") return CandyType::TYPE_PURPLE;
+    if (type == "RED") return CandyType::TYPE_RED;
+    if (type == "YELLOW") return CandyType::TYPE_YELLOW;
+    
+    return CandyType::COUNT; // Devuelve COUNT si el texto es corrupto o no se reconoce
 }
 
 bool Board::dump(const std::string& output_path) const
@@ -307,7 +308,7 @@ bool Board::dump(const std::string& output_path) const
                 // Si hay caramelo en la celda [c,f] entonces guarda
                 if (caramelo != nullptr)
                 {
-                    boardSave << tipoAString(caramelo->getType()) << " " << c << " " << f << endl;
+                    boardSave << tipoAString(caramelo->getType()) << " " << c << " " << f << "\n";
                 }
             }
         }
@@ -333,18 +334,19 @@ bool Board::load(const std::string& input_path)
                 Candy* actual = getCell(c,f);
                 if (actual != nullptr) {
                     delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+                    setCell(nullptr, c, f);
                 }
-                setCell(nullptr, c, f);
             }
         }
 
         string tipoStr;
-        int c;
-        int f;
+        int c, f;
 
         //El bucle se repite mientras queden lineas por leer.
         while (boardLoad >> tipoStr >> c >> f) {
             CandyType tipoEnum = stringATipo(tipoStr); //devuelve el tipo del caramelo
+
+            // Solo creamos el caramelo si el texto leído es válido
             if (tipoEnum != CandyType::COUNT) {
                 Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
                 setCell(nuevoCaramelo, c, f);

@@ -254,12 +254,11 @@ bool test() {
             Board tableroDL(10, 10);
             Candy* c1 = new Candy(CandyType::TYPE_RED);
             Candy* c2 = new Candy(CandyType::TYPE_GREEN);
-            tableroDL.setCell(c1, 2, 3);
-            tableroDL.setCell(c2, 3, 3);
-
-            string inputPath = getDataDirPath() + "test_dump.txt";
+            tableroDL.setCell(c1, 6, 7);
+            tableroDL.setCell(c2, 8, 9);
 
             // Exportamos el tablero.
+            string inputPath = getDataDirPath() + "test_dump.txt";
             tableroDL.dump(inputPath);
 
             // Creamos un nuevo tablero cargando el anterior.
@@ -267,26 +266,14 @@ bool test() {
             tableroDL2.load(inputPath);
 
             // Comprobamos que los caramelos se han cargado correctamente.
-            if (tableroDL2.getCell(2, 2) == nullptr)
+            if (tableroDL2.getCell(6, 7) == nullptr || 
+                tableroDL2.getCell(8, 9) == nullptr ||
+                tableroDL.getCell(6, 7)->getType() != tableroDL2.getCell(6, 7)->getType() || 
+                tableroDL.getCell(8, 9)->getType() != tableroDL2.getCell(8, 9)->getType())
             {
-                cout << "dump y load fallan porque el caramelo ROJO no se cargo en tableroDL2." << endl;
+                cout << "dump y load fallan al guardar." << endl;
                 resultado = false;
-            } 
-            else if (tableroDL2.getCell(3, 3) == nullptr)
-            {
-                cout << "dump y load fallan porque el caramelo VERDE no se cargo en tableroDL2." << endl;
-                resultado = false;
-            } 
-            else if (tableroDL.getCell(2, 2)->getType() != tableroDL2.getCell(2, 2)->getType())
-            {
-                cout << "dump y load fallan porque el ROJO cambio de tipo al cargarse." << endl;
-                resultado = false;
-            } 
-            else if (tableroDL.getCell(3, 3)->getType() != tableroDL2.getCell(3, 3)->getType())
-            {
-                cout << "dump y load fallan porque el VERDE cambio de tipo al cargarse." << endl;
-                resultado = false;
-            } 
+            }
             else
             {
                 cout << "dump y load funcionan al guardar." << endl;
@@ -298,11 +285,13 @@ bool test() {
 
             string inputPath = getDataDirPath() + "noExiste.txt";
 
+            // Intentamos cargar un archivo que no existe
             if (tableroDL.load(inputPath) == true)
             {
                 cout << "dump y load fallan al cargar." << endl;
                 resultado = false;
-            } else
+            }
+            else
             {
                 cout << "dump y load funcionan al cargar." << endl;
             }
