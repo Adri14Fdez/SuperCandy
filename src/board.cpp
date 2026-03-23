@@ -280,25 +280,25 @@ std::string tipoAString(CandyType type)
 {
     switch (type)
     {
-        case CandyType::TYPE_BLUE:   return "BLUE";
-        case CandyType::TYPE_GREEN:  return "GREEN";
-        case CandyType::TYPE_ORANGE: return "ORANGE";
-        case CandyType::TYPE_PURPLE: return "PURPLE";
-        case CandyType::TYPE_RED:    return "RED";
-        case CandyType::TYPE_YELLOW: return "YELLOW";
-        default:                     return "UNKNOWN";
+        case CandyType::TYPE_BLUE:   return "AZUL";
+        case CandyType::TYPE_GREEN:  return "VERDE";
+        case CandyType::TYPE_ORANGE: return "NARANJA";
+        case CandyType::TYPE_PURPLE: return "LILA";
+        case CandyType::TYPE_RED:    return "ROJO";
+        case CandyType::TYPE_YELLOW: return "AMARILLO";
+        default:                     return "DESCONOCIDO";
     }
 }
 
 //La funcion deshace el cambio para poder leerlo en el tablero.
 CandyType stringATipo(const string& type)
 {
-    if (type == "BLUE") return CandyType::TYPE_BLUE;
-    if (type == "GREEN") return CandyType::TYPE_GREEN;
-    if (type == "ORANGE") return CandyType::TYPE_ORANGE;
-    if (type == "PURPLE") return CandyType::TYPE_PURPLE;
-    if (type == "RED") return CandyType::TYPE_RED;
-    if (type == "YELLOW") return CandyType::TYPE_YELLOW;
+    if (type == "AZUL") return CandyType::TYPE_BLUE;
+    if (type == "VERDE") return CandyType::TYPE_GREEN;
+    if (type == "NARANJA") return CandyType::TYPE_ORANGE;
+    if (type == "LILA") return CandyType::TYPE_PURPLE;
+    if (type == "ROJO") return CandyType::TYPE_RED;
+    if (type == "AMARILLO") return CandyType::TYPE_YELLOW;
     
     return CandyType::COUNT; // Devuelve COUNT si el texto es corrupto o no se reconoce
 }

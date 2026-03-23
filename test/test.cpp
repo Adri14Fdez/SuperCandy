@@ -30,6 +30,28 @@ bool test() {
     }
     cout << "--------------------------------------------------" << endl;
 
+    // Tablero vacío
+    {
+        Board tableroCV(10, 10);
+
+        bool todoVacio = true;
+        for (int x = 0; x < tableroCV.getWidth(); x++) {
+            for (int y = 0; y < tableroCV.getHeight(); y++) {
+                if (tableroCV.getCell(x, y) != nullptr) {
+                    todoVacio = false;
+                }
+            }
+        }
+        if (!todoVacio) {
+            cout << "Fallo: El constructor no inicializa todas las celdas a nullptr." << endl;
+            todoCorrecto = false;
+        }
+        else {
+            cout << "Constructor inicializa el tablero correctamente a nullptr." << endl;
+        }
+    }
+    cout << "--------------------------------------------------" << endl;
+
     // Test getCell y setCell
     {
 
@@ -220,48 +242,93 @@ bool test() {
 
     // Test explodeAndDrop
     {
-        Board tableroEAD(10, 10);
-
-        // 3 iguales en el suelo que deben explotar.
-        Candy* exp1 = new Candy(CandyType::TYPE_RED);
-        Candy* exp2 = new Candy(CandyType::TYPE_RED);
-        Candy* exp3 = new Candy(CandyType::TYPE_RED);
-        tableroEAD.setCell(exp1, 5, 9);
-        tableroEAD.setCell(exp2, 6, 9);
-        tableroEAD.setCell(exp3, 7, 9);
-
-        // Caramelos sueltos justo encima de ellos que deben caer.
-        Candy* drop1 = new Candy(CandyType::TYPE_BLUE);
-        Candy* drop2 = new Candy(CandyType::TYPE_GREEN);
-        tableroEAD.setCell(drop1, 5, 8);
-        tableroEAD.setCell(drop2, 6, 8);
-
-        // Llamamos a la funcion
-        vector<Candy*> destruidos = tableroEAD.explodeAndDrop();
-
-        // Comprobamos que el vector contiene el numero de caramelos que deberian explotar.
-        if (destruidos.size() != 3)
+        // Destruir y caer
         {
-            cout << "explodeAndDrop falla porque el vector devuelto no tiene 3 elementos (tiene " << destruidos.size() << ")." << endl;
-            todoCorrecto = false;
+            Board tableroEAD(10, 10);
+
+            // 3 iguales en el suelo que deben explotar.
+            Candy* exp1 = new Candy(CandyType::TYPE_RED);
+            Candy* exp2 = new Candy(CandyType::TYPE_RED);
+            Candy* exp3 = new Candy(CandyType::TYPE_RED);
+            tableroEAD.setCell(exp1, 5, 9);
+            tableroEAD.setCell(exp2, 6, 9);
+            tableroEAD.setCell(exp3, 7, 9);
+
+            // Caramelos sueltos justo encima de ellos que deben caer.
+            Candy* cae1 = new Candy(CandyType::TYPE_BLUE);
+            Candy* cae2 = new Candy(CandyType::TYPE_GREEN);
+            tableroEAD.setCell(cae1, 5, 8);
+            tableroEAD.setCell(cae2, 6, 8);
+
+            // Llamamos a la funcion
+            vector<Candy*> destruidos = tableroEAD.explodeAndDrop();
+
+            // Comprobamos que el vector contiene el numero de caramelos que deberian explotar.
+            if (destruidos.size() != 3)
+            {
+                cout << "explodeAndDrop falla porque el vector devuelto no tiene 3 elementos (tiene " << destruidos.size() << ")." << endl;
+                todoCorrecto = false;
+            }
+
+            // Comprobamos que las posiciones destruidas han quedado ocupadas por los caramelos que caian 
+            // y que las posiciones origen de los caramelos que caian han quedado vacias.
+            if (tableroEAD.getCell(5, 9) != cae1 || tableroEAD.getCell(6, 9) != cae2 || tableroEAD.getCell(7, 9) != nullptr
+                || tableroEAD.getCell(5, 8) != nullptr || tableroEAD.getCell(6, 8) != nullptr)
+            {
+                cout << "explodeAndDrop falla porque los caramelos no han caido correctamente." << endl;
+                todoCorrecto = false;
+            }
+            else
+            {
+                cout << "explodeAndDrop funciona correctamente." << endl;
+            }
+
+            // Borramos los caramelos destruidos.
+            for (Candy* c : destruidos)
+            {
+                delete c;
+            }
         }
 
-        // Comprobamos que las posiciones destruidas han quedado ocupadas por los caramelos que caian 
-        // y que las posiciones origen de los caramelos que caian han quedado vacias.
-        if (tableroEAD.getCell(5, 9) != drop1 || tableroEAD.getCell(6, 9) != drop2 || tableroEAD.getCell(7, 9) != nullptr
-            || tableroEAD.getCell(5, 8) != nullptr || tableroEAD.getCell(6, 8) != nullptr)
+        // Reacción en cadena
         {
-            cout << "explodeAndDrop falla porque los caramelos no han caido correctamente." << endl;
-            todoCorrecto = false;
-        } else
-        {
-            cout << "explodeAndDrop funciona correctamente." << endl;
-        }
+            Board tableroRC(10, 10);
 
-        // Borramos los caramelos destruidos.
-        for (Candy* c : destruidos)
-        {
-            delete c;
+            Candy* rojo1 = new Candy(CandyType::TYPE_RED);
+            Candy* rojo2 = new Candy(CandyType::TYPE_RED);
+            Candy* rojo3 = new Candy(CandyType::TYPE_RED);
+            tableroRC.setCell(rojo1, 5, 9);
+            tableroRC.setCell(rojo2, 6, 9);
+            tableroRC.setCell(rojo3, 7, 9);
+
+            Candy* azul1 = new Candy(CandyType::TYPE_BLUE);
+            Candy* azul2 = new Candy(CandyType::TYPE_BLUE);
+            Candy* azul3 = new Candy(CandyType::TYPE_BLUE);
+            tableroRC.setCell(azul1, 4, 9);
+            tableroRC.setCell(azul2, 5, 8);
+            tableroRC.setCell(azul3, 6, 8);
+
+            vector<Candy*> destruidosRC = tableroRC.explodeAndDrop();
+
+            if (destruidosRC.size() != 6)
+            {
+                cout << "explodeAndDrop falla en la reaccion en cadena. De 6 destruidos, ha destruido " << destruidosRC.size() << "." << endl;
+                todoCorrecto = false;
+            }
+            else if (tableroRC.getCell(4, 9) != nullptr || tableroRC.getCell(5, 9) != nullptr || tableroRC.getCell(6, 9) != nullptr)
+            {
+                cout << "explodeAndDrop falla porque los caramelos de la reaccion en cadena no desaparecieron del tablero." << endl;
+                todoCorrecto = false;
+            }
+            else
+            {
+                cout << "explodeAndDrop funciona correctamente con reaccion en cadena." << endl;
+            }
+
+            for (Candy* c : destruidosRC)
+            {
+                delete c;
+            }
         }
     }
     cout << "--------------------------------------------------" << endl;
@@ -291,12 +358,12 @@ bool test() {
                 tableroDL.getCell(6, 7)->getType() != tableroDL2.getCell(6, 7)->getType() || 
                 tableroDL.getCell(8, 9)->getType() != tableroDL2.getCell(8, 9)->getType())
             {
-                cout << "dump y load fallan al guardar." << endl;
+                cout << "dump y load fallan al guardar y cargar." << endl;
                 todoCorrecto = false;
             }
             else
             {
-                cout << "dump y load funcionan al guardar." << endl;
+                cout << "dump y load funcionan al guardar y cargar." << endl;
             }
         }
         // Caso invalido.
@@ -308,12 +375,12 @@ bool test() {
             // Intentamos cargar un archivo que no existe
             if (tableroDL.load(inputPath) == true)
             {
-                cout << "dump y load fallan al cargar." << endl;
+                cout << "load falla al cargar un archivo inexistente." << endl;
                 todoCorrecto = false;
             }
             else
             {
-                cout << "dump y load funcionan al cargar." << endl;
+                cout << "load funciona al cargar un archivo inexistente." << endl;
             }
         }
     }
