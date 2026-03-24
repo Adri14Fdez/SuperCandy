@@ -91,8 +91,8 @@ private:
 
     /// Students can add as many protected methods and attributes as needed.
 
-    int boardX = DEFAULT_BOARD_WIDTH;
-    int boardY = DEFAULT_BOARD_HEIGHT;
+    int boardX;
+    int boardY;
     // "grid" es una array bidimensional donde se guarda la dirreccion del candy que hay en cada posición.
     Candy* grid[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT];
 };

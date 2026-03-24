@@ -29,7 +29,7 @@ Board::Board(int width, int height)
 }
 
 Board::~Board()
-{
+{/*
     // Borramos todos los caramelos que queden en el tablero.
     for (int c = 0; c < boardX; c++) {
         for (int f = 0; f < boardY; f++) {
@@ -39,7 +39,7 @@ Board::~Board()
             }
         }
     }
-}
+*/}
 
 Candy* Board::getCell(int x, int y) const
 {
