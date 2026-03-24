@@ -6,23 +6,21 @@ using namespace std;
 
 Board::Board(int width, int height)
 {
-    if (width > 0 && height > 0 && width <= MAX_BOARD_WIDTH && height <= MAX_BOARD_HEIGHT)
+    if (width <= 0 || height <= 0 || width > MAX_BOARD_WIDTH || height > MAX_BOARD_HEIGHT)
+    {
+        boardX = DEFAULT_BOARD_WIDTH;
+        boardY = DEFAULT_BOARD_HEIGHT;
+    }
+    else
     {
         boardX = width;
         boardY = height;
     }
-    else
+
+    for (int x = 0; x < MAX_BOARD_WIDTH; x++)
     {
-        boardX = DEFAULT_BOARD_WIDTH;
-        boardY = DEFAULT_BOARD_HEIGHT;
-        cout << "El tamaño del tablero es inválido, se ha establecido el tamaño por defecto." << endl;
-    }
-    
-    for (int x = 0; x < boardX; x++)
-    {
-        for (int y = 0; y < boardY; y++)
+        for (int y = 0; y < MAX_BOARD_HEIGHT; y++)
         {
-            // Inicializa la array para que esté vacía.
             grid[x][y] = nullptr;
         }
     }
