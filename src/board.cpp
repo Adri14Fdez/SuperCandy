@@ -6,7 +6,7 @@ using namespace std;
 
 Board::Board(int width, int height)
 {
-    if (width <= DEFAULT_BOARD_WIDTH && height <= DEFAULT_BOARD_HEIGHT && width > 0 && height > 0)
+    if (width > 0 && height > 0 && width <= MAX_BOARD_WIDTH && height <= MAX_BOARD_HEIGHT)
     {
         boardX = width;
         boardY = height;
@@ -15,7 +15,7 @@ Board::Board(int width, int height)
     {
         boardX = DEFAULT_BOARD_WIDTH;
         boardY = DEFAULT_BOARD_HEIGHT;
-        cout << "El tamaño del tablero supera el máximo permitido." << endl;
+        cout << "El tamaño del tablero es inválido, se ha establecido el tamaño por defecto." << endl;
     }
     
     for (int x = 0; x < boardX; x++)
@@ -218,7 +218,7 @@ std::vector<Candy*> Board::explodeAndDrop()
     {
         contador = 0;
         // Lista para guardar las posiciones que se explotaran posteriormente.
-        bool lista[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT] = {false};
+        bool lista[MAX_BOARD_WIDTH][MAX_BOARD_HEIGHT] = {false};
         for (int x = 0; x < boardX; x++)
         {
             for (int y = 0; y < boardY; y++)

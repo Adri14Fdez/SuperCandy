@@ -15,6 +15,9 @@
 const int DEFAULT_BOARD_WIDTH = 10;
 const int DEFAULT_BOARD_HEIGHT = 10;
 
+const int MAX_BOARD_WIDTH = 100;
+const int MAX_BOARD_HEIGHT = 100;
+
 /// Number of candy pieces of the same type needed to explode a horizontal, vertical or diagonal line
 const int SHORTEST_EXPLOSION_LINE = 3;
 
@@ -94,7 +97,7 @@ private:
     int boardX;
     int boardY;
     // "grid" es una array bidimensional donde se guarda la dirreccion del candy que hay en cada posición.
-    Candy* grid[DEFAULT_BOARD_WIDTH][DEFAULT_BOARD_HEIGHT];
+    Candy* grid[MAX_BOARD_WIDTH][MAX_BOARD_HEIGHT];
 };
 
 #endif
