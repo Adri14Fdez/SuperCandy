@@ -6,7 +6,7 @@ using namespace std;
 
 Board::Board(int width, int height)
 {
-    if (width <= DEFAULT_BOARD_WIDTH && height <= DEFAULT_BOARD_HEIGHT)
+    if (width <= DEFAULT_BOARD_WIDTH && height <= DEFAULT_BOARD_HEIGHT && width > 0 && height > 0)
     {
         boardX = width;
         boardY = height;
@@ -250,7 +250,7 @@ std::vector<Candy*> Board::explodeAndDrop()
         
         for (int x = 0; x < boardX; x++)
         {
-            for (int y = boardY - 1; y > 0; y--)
+            for (int y = boardY - 1; y >= 0; y--)
             {
                 // Comprobamos cada columna de abajo a arriba hasta encontrar una casilla vacia.
                 if (getCell(x,y) == nullptr)
