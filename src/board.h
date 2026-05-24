@@ -78,6 +78,9 @@ public:
 
     /**
      * Set the cell at the given coordinates to the given candy.
+     * CUIDADO: Este método no libera la memoria de Candys ya existentes en la celda. Para
+     * evitar memory leaks, quien llame a la función debe asegurarse de hacer `delete getCell(x,y)`
+     * antes de llamar a este método, o guardar el puntero antiguo de forma segura en otro lugar.
      * @param candy the candy to place in the cell.
      * @param x 0-indexed, left to right, x coordinate of the cell.
      * @param y 0-indexed, top to bottom, y coordinate of the cell.
@@ -96,8 +99,8 @@ private:
 
     int boardX;
     int boardY;
-    // "grid" es una array bidimensional donde se guarda la dirreccion del candy que hay en cada posición.
-    Candy* grid[MAX_BOARD_WIDTH][MAX_BOARD_HEIGHT];
+    // "grid" es una array dinámica de dos dimensiones (**) que guarda punteros de caramelos (tercer *).
+    Candy*** grid;
 };
 
 #endif

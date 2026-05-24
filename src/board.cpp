@@ -17,9 +17,15 @@ Board::Board(int width, int height)
         boardY = height;
     }
 
-    for (int x = 0; x < MAX_BOARD_WIDTH; x++)
+    // Creamos el array principal (las columnas).
+    grid = new Candy**[boardX];
+
+    for (int x = 0; x < boardX; x++)
     {
-        for (int y = 0; y < MAX_BOARD_HEIGHT; y++)
+        // Para cada columna reservamos las filas.
+        grid[x] = new Candy * [boardY];
+
+        for (int y = 0; y < boardY; y++)
         {
             grid[x][y] = nullptr;
         }
@@ -27,17 +33,25 @@ Board::Board(int width, int height)
 }
 
 Board::~Board()
-{/*
+{
     // Borramos todos los caramelos que queden en el tablero.
-    for (int c = 0; c < boardX; c++) {
-        for (int f = 0; f < boardY; f++) {
-            Candy* actual = getCell(c,f);
+    for (int x = 0; x < boardX; x++)
+    {
+        for (int y = 0; y < boardY; y++)
+        {
+            Candy* actual = getCell(x,y);
+
             if (actual != nullptr) {
-                delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+                delete actual; // Borramos los caramelos que queden vivos en la partida.
             }
         }
+        // Una ver borrados, eliminamos la columa.
+        delete[] grid[x];
     }
-*/}
+
+    // Borramos el array principal.
+    delete[] grid;
+}
 
 Candy* Board::getCell(int x, int y) const
 {
@@ -337,10 +351,13 @@ bool Board::load(const std::string& input_path)
     if (boardLoad)
     {
         // Borramos todo lo que habia en el tablero.
-        for (int c = 0; c < boardX; c++) {
-            for (int f = 0; f < boardY; f++) {
+        for (int c = 0; c < boardX; c++)
+        {
+            for (int f = 0; f < boardY; f++)
+            {
                 Candy* actual = getCell(c,f);
-                if (actual != nullptr) {
+                if (actual != nullptr)
+                {
                     delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
                     setCell(nullptr, c, f);
                 }
@@ -351,11 +368,13 @@ bool Board::load(const std::string& input_path)
         int c, f;
 
         //El bucle se repite mientras queden lineas por leer.
-        while (boardLoad >> tipoStr >> c >> f) {
+        while (boardLoad >> tipoStr >> c >> f)
+        {
             CandyType tipoEnum = stringATipo(tipoStr); //devuelve el tipo del caramelo
 
             // Solo creamos el caramelo si el texto leído es válido
-            if (tipoEnum != CandyType::COUNT) {
+            if (tipoEnum != CandyType::COUNT)
+            {
                 Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
                 setCell(nuevoCaramelo, c, f);
             }
