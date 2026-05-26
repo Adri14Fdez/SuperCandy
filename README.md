@@ -48,7 +48,7 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 
 ## EXTRA
 - [ ] Estadistica de caramelos rotos. 
-- [ ] Mecanismo de pausa.
+- [X] Mecanismo de pausa.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
 - [ ] Sistema puntuacion avanzada (combos, patrones, etc).

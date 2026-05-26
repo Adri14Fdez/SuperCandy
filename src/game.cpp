@@ -33,6 +33,26 @@ Game::~Game()
 void Game::update(const Controller& controller)
 {
     // Implement your code here
+    if (m_pause)
+    {
+        if (controller.isKey3Pressed())
+        {
+            m_pause = false;
+        }
+    }
+    else
+    {
+        if (controller.isKey3Pressed())
+        {
+            m_pause = true;
+        }
+    }
+
+    while (m_pause)
+    {
+        return;
+    }
+
     m_frameCounter++;
 
     moverIzq(controller);
@@ -105,6 +125,10 @@ void Game::render(GraphicManager& graphics)
     graphics.drawText("Score: " + to_string(m_score), 450, 10, 70, 125, 200, 125);
     graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 675, 20, 100, 100, 100);
 
+    if (m_pause)
+    {
+        graphics.drawText("PAUSA", 15, 150, 32, 125, 200, 125);
+    }
 
     // Dibuja los caramelos del tablero
     for (int x = 0; x < m_tablero.getWidth(); x++)

@@ -71,6 +71,7 @@ private:
     Candy* m_bloqueCaramelos[3];
 
     bool m_gameOver = false;
+    bool m_pause = false;
 
     Board m_tablero;
     int m_limDer = m_tablero.getWidth() - 1;
