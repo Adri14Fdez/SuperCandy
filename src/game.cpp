@@ -12,9 +12,19 @@ Game::Game()
     m_blockX = 5;
     m_blockY = -3;
 
-    m_bloqueCaramelos[0] = new Candy(CandyType::TYPE_RED);
-    m_bloqueCaramelos[1] = new Candy(CandyType::TYPE_BLUE);
-    m_bloqueCaramelos[2] = new Candy(CandyType::TYPE_GREEN);
+    //Generar los caramelos aleatoriamente
+
+    std::random_device rd; //Genera una semilla random
+    std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
+    int numAleatorio = 0;
+
+    for (int i = 0; i < 3; i++)
+    {
+        numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
+
+        // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
+        m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
+    }
 }
 
 Game::~Game()
@@ -94,9 +104,19 @@ void Game::update(const Controller& controller)
             m_blockX = 5;
             m_blockY = -3;
 
-            m_bloqueCaramelos[0] = new Candy(CandyType::TYPE_RED);
-            m_bloqueCaramelos[1] = new Candy(CandyType::TYPE_BLUE);
-            m_bloqueCaramelos[2] = new Candy(CandyType::TYPE_GREEN);
+            //Generar otra vez los caramelos aleatoriamente
+
+            std::random_device rd; //Genera una semilla random
+            std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
+            int numAleatorio = 0;
+
+            for (int i = 0; i < 3; i++)
+            {
+                numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
+
+                // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
+                m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
+            }
         }
 
         cout << "X: " << m_blockX << " Y: " << m_blockY << endl;
