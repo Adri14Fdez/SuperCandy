@@ -42,7 +42,13 @@ Game::~Game()
 
 void Game::update(const Controller& controller)
 {
+    
     // Implement your code here
+    if (m_gameOver)
+    {
+        return;
+    }
+
     if (m_pause)
     {
         if (controller.isKey3Pressed())
@@ -58,7 +64,7 @@ void Game::update(const Controller& controller)
         }
     }
 
-    while (m_pause)
+    if (m_pause)
     {
         return;
     }
@@ -86,37 +92,25 @@ void Game::update(const Controller& controller)
         }
         else
         {
-            for (int i = 0; i < 3; i++)
+            if (!checkGameOver())
             {
-                m_tablero.setCell(m_bloqueCaramelos[i], m_blockX, m_blockY + i);
-                m_bloqueCaramelos[i] = nullptr;
-            }
+                for (int i = 0; i < 3; i++)
+                {
+                    m_tablero.setCell(m_bloqueCaramelos[i], m_blockX, m_blockY + i);
+                    m_bloqueCaramelos[i] = nullptr;
+                }
 
-            // Explotamos los caramelos y los guardamos en un vector
-            std::vector<Candy*> caramelosExplotados = m_tablero.explodeAndDrop();
+                // Explotamos los caramelos y los guardamos en un vector
+                std::vector<Candy*> caramelosExplotados = m_tablero.explodeAndDrop();
 
-            // Liberamos la memoria de los caramelos que acaban de explotar
-            for (size_t i = 0; i < caramelosExplotados.size(); i++)
-            {
-                delete caramelosExplotados[i];
-            }
+                // Liberamos la memoria de los caramelos que acaban de explotar
+                for (size_t i = 0; i < caramelosExplotados.size(); i++)
+                {
+                    delete caramelosExplotados[i];
+                }
 
-            m_blockX = 5;
-            m_blockY = -3;
-
-            //Generar otra vez los caramelos aleatoriamente
-
-            std::random_device rd; //Genera una semilla random
-            std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
-            int numAleatorio = 0;
-
-            for (int i = 0; i < 3; i++)
-            {
-                numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
-
-                // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
-                m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
-            }
+                nuevoBloque();
+            }            
         }
 
         cout << "X: " << m_blockX << " Y: " << m_blockY << endl;
@@ -129,7 +123,10 @@ void Game::render(GraphicManager& graphics)
     
     // Note: the following code exhibits the main graphic library features
     // Board: border [draw rectangles] and a single piece of candy
-    const int board_size = 10;
+
+    // Con board_size = m_tablero.getHeight() conseguimos que si el tablero tiene una
+    // medida diferente se sigan dibujando bien los limites.
+    const int board_size = m_tablero.getHeight();
     const int board_padding = 3;
     graphics.drawRectangle(
         CANDY_IMAGE_HEIGHT * board_padding, CANDY_IMAGE_HEIGHT * board_padding,
@@ -175,6 +172,11 @@ void Game::render(GraphicManager& graphics)
 
             graphics.drawImage(m_bloqueCaramelos[i]->getResourceName(), pixelX, pixelY);
         }
+    }
+
+    if (m_gameOver)
+    {
+        graphics.drawText("HAS PERDIDO", 160, 300, 64, 255, 0, 0);
     }
 }
 
@@ -278,3 +280,46 @@ void Game::rotarCaramelos(const Controller& controller)
     }
 }
 
+bool Game::checkGameOver()
+{
+    bool piezaFuera = false;
+
+    for (int i = 0; i < 3; i++)
+    {
+        int posPieza = m_blockY + i;
+
+        if (posPieza < 0)
+        {
+            piezaFuera = true;
+            delete m_bloqueCaramelos[i];
+            m_bloqueCaramelos[i] = nullptr;
+        }
+    }
+
+    if (piezaFuera)
+    {
+        m_gameOver = true;
+    }
+
+    return m_gameOver;
+}
+
+void Game::nuevoBloque()
+{
+    m_blockX = 5;
+    m_blockY = -3;
+
+    //Generar otra vez los caramelos aleatoriamente
+
+    std::random_device rd; //Genera una semilla random
+    std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
+    int numAleatorio = 0;
+
+    for (int i = 0; i < 3; i++)
+    {
+        numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
+
+        // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
+        m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
+    }
+}

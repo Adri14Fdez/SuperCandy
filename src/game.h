@@ -57,11 +57,6 @@ public:
     /// @return true if this game is equal to the other game (same board state and falling block)
     bool operator==(const Game& other) const;
 
-    void moverIzq(const Controller& controller);
-    void moverDer(const Controller& controller);
-    void moverAbajo(const Controller& controller);
-    void rotarCaramelos(const Controller& controller);
-
 private:
     int m_frameCounter = 0;
     int m_score = 0;
@@ -77,5 +72,13 @@ private:
     int m_limDer = m_tablero.getWidth() - 1;
     int m_limIzq = 0;
     int m_limSuelo = m_tablero.getHeight() - 3;
+
+    void moverIzq(const Controller& controller);
+    void moverDer(const Controller& controller);
+    void moverAbajo(const Controller& controller);
+    void rotarCaramelos(const Controller& controller);
+    bool checkGameOver();
+    void nuevoBloque();
+
 };
 #endif
