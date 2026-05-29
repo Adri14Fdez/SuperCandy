@@ -386,5 +386,29 @@ bool test() {
     }
     cout << "--------------------------------------------------" << endl;
 
+    // Test operator== clase Game **NO ACABADOOOOOOOOOOOO** (creo jsjs)
+    {
+        Game g1, g2;
+        if (g1 == g2)
+        {
+            cout << "g1 igual a g2 cuando no deberia." << endl;
+            todoCorrecto = false;
+        }
+        else
+        {
+            cout << "g1 diferente a g2 perfe." << endl;
+        }
+
+        if (g1 == g1)
+        {
+            cout << "g1 es igual a g1 correcto" << endl;
+        }
+        else
+        {
+            cout << "g1 NO es igual a g1 MAL" << endl;
+            todoCorrecto = false;
+        }
+    }
+
     return todoCorrecto;
 }

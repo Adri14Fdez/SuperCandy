@@ -51,14 +51,14 @@ void Game::update(const Controller& controller)
 
     if (m_pause)
     {
-        if (controller.isKey3Pressed())
+        if (controller.isMouseRightPressed())
         {
             m_pause = false;
         }
     }
     else
     {
-        if (controller.isKey3Pressed())
+        if (controller.isMouseRightPressed())
         {
             m_pause = true;
         }
@@ -140,7 +140,8 @@ void Game::render(GraphicManager& graphics)
                       "Buttons: [Q] [W] [E]  --  Exit [ESC]",
                       25, 700, 20, 100, 100, 100);
     graphics.drawText("Score: " + to_string(m_score), 450, 10, 70, 125, 200, 125);
-    graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 675, 20, 100, 100, 100);
+    graphics.drawText("Pause: [Mouse Right]", 25, 675, 20, 100, 100, 100);
+    graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
 
     if (m_pause)
     {
@@ -205,7 +206,26 @@ bool Game::load(const std::string& input_path)
 bool Game::operator==(const Game& other) const
 {
     // Implement your code here
-    return false;
+    bool esIgual = true;
+
+    // Comprobar variables basicas
+    if (m_gameOver != other.m_gameOver || m_score != other.m_score)
+    {
+        esIgual = false;
+    }
+
+    for (int i = 0; i < 3 && esIgual; i++)
+    {
+        Candy* miCaramelo = m_bloqueCaramelos[i];
+        Candy* suCaramelo = other.m_bloqueCaramelos[i];
+
+        if (miCaramelo->getType() != suCaramelo->getType())
+        {
+            esIgual = false;
+        }
+    }
+
+    return esIgual;
 }
 
 void Game::moverIzq(const Controller& controller)

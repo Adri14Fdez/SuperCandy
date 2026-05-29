@@ -79,6 +79,5 @@ private:
     void rotarCaramelos(const Controller& controller);
     bool checkGameOver();
     void nuevoBloque();
-
 };
 #endif
