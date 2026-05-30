@@ -93,6 +93,9 @@ public:
     /// Get the board height
     int getHeight() const;
 
+    /// @return true if this board is equal to the other board.
+    bool operator==(const Board& other) const;
+
 private:
 
     /// Students can add as many protected methods and attributes as needed.

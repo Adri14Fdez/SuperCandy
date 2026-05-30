@@ -389,3 +389,38 @@ bool Board::load(const std::string& input_path)
         return false;
     }
 }
+
+bool Board::operator==(const Board& other) const
+{
+    // Implement your code here
+    bool esIgual = true;
+
+    if (boardX != other.boardX || boardY != other.boardY)
+    {
+        esIgual = false;
+    }
+
+    for (int x = 0; x < boardX && esIgual; x++)
+    {
+        for (int y = 0; y < boardY && esIgual; y++)
+        {
+            Candy* miCaramelo = getCell(x, y);
+            Candy* suCaramelo = other.getCell(x, y);
+
+            if ((miCaramelo == nullptr && suCaramelo != nullptr) ||
+                (miCaramelo != nullptr && suCaramelo == nullptr))
+            {
+                esIgual = false;
+            }
+            else if (miCaramelo != nullptr && suCaramelo != nullptr)
+            {
+                if (miCaramelo->getType() != suCaramelo->getType())
+                {
+                    esIgual = false;
+                }
+            }
+        }
+    }
+
+    return esIgual;
+}

@@ -103,6 +103,9 @@ void Game::update(const Controller& controller)
                 // Explotamos los caramelos y los guardamos en un vector
                 std::vector<Candy*> caramelosExplotados = m_tablero.explodeAndDrop();
 
+                //Actualizar el score PROVISIONAL
+                m_score += (caramelosExplotados.size() * 10);
+
                 // Liberamos la memoria de los caramelos que acaban de explotar
                 for (size_t i = 0; i < caramelosExplotados.size(); i++)
                 {
@@ -139,7 +142,7 @@ void Game::render(GraphicManager& graphics)
     graphics.drawText("Movement: [Up] [Down] [Left] [Right]  --  "
                       "Buttons: [Q] [W] [E]  --  Exit [ESC]",
                       25, 700, 20, 100, 100, 100);
-    graphics.drawText("Score: " + to_string(m_score), 450, 10, 70, 125, 200, 125);
+    graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
     graphics.drawText("Pause: [Mouse Right]", 25, 675, 20, 100, 100, 100);
     graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
 
@@ -209,20 +212,40 @@ bool Game::operator==(const Game& other) const
     bool esIgual = true;
 
     // Comprobar variables basicas
-    if (m_gameOver != other.m_gameOver || m_score != other.m_score)
+    if ((m_gameOver != other.m_gameOver) ||
+        ( m_score != other.m_score) ||
+        (m_frameCounter != other.m_frameCounter) ||
+        (m_blockX != other.m_blockX) ||
+        (m_blockY != other.m_blockY) ||
+        (m_pause != other.m_pause))
     {
         esIgual = false;
     }
 
+    // Comprobar bloqueCaramelos
     for (int i = 0; i < 3 && esIgual; i++)
     {
         Candy* miCaramelo = m_bloqueCaramelos[i];
         Candy* suCaramelo = other.m_bloqueCaramelos[i];
 
-        if (miCaramelo->getType() != suCaramelo->getType())
+        if ((miCaramelo == nullptr && suCaramelo != nullptr) ||
+            (miCaramelo != nullptr && suCaramelo == nullptr))
         {
             esIgual = false;
         }
+        else if (miCaramelo != nullptr && suCaramelo != nullptr)
+        {
+            if (miCaramelo->getType() != suCaramelo->getType())
+            {
+                esIgual = false;
+            }
+        }
+    }
+
+    // Comprobar tablero
+    if (!(m_tablero == other.m_tablero))
+    {
+        esIgual = false;
     }
 
     return esIgual;

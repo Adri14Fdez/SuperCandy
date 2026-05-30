@@ -41,7 +41,7 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [X] Generación aleatoria de piezas de bloqueCaramelo.
 - [X] Hacer condicion Game Over.
 - [ ] Metodos de guardar y cargar partida.
-- [ ] Metodos de comparacion de Games.
+- [X] Metodos de comparacion de Games.
 - [ ] Cargar partida desde fichero.
 - [ ] Tests de la clase Game.
 - [ ] Identificar lo de los conceptos nuevos aprendidos. 
