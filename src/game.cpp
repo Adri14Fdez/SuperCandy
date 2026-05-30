@@ -2,6 +2,7 @@
 #include <random>
 #include "graphics.h"
 #include "candy.h"
+#include <fstream>
 
 Game::Game()
 {
@@ -197,7 +198,41 @@ void Game::run()
 bool Game::dump(const std::string& output_path) const
 {
     // Implement your code here
+    if (!m_tablero.dump(output_path))
+    {
+        return false; //si no encuentra el archivo devuelve false
+    }
+
+    ofstream fitxer;
+    fitxer.open(output_path, std::ofstream::app); //usamos app de append, para que los datos del tablero que ya estaban no se borren
+
+    if (fitxer.is_open())
+    {
+        fitxer << "SCORE " << m_score << "\n";
+        fitxer << "FRAME " << m_frameCounter << "\n";
+        fitxer << "BLOCKX " << m_blockX << "\n";
+        fitxer << "BLOCKY " << m_blockY << "\n";
+        fitxer << "GAMEOVER " << m_gameOver << "\n";
+        fitxer << "PAUSE " << m_pause << "\n";
+
+        for (int i = 0; i < 3; i++) 
+        {
+            if (m_bloqueCaramelos[i] != nullptr)
+            {
+                fitxer << "CANDY" << i << " " << gameTipoAString(m_bloqueCaramelos[i]->getType()) << "\n";
+            }
+            else
+            {
+                fitxer << "CANDY" << i << "VACIO\n"; //por si acaso no hay caramelo
+            }
+        }
+
+        fitxer.close();
+        return true;
+    }
+
     return false;
+
 }
 
 bool Game::load(const std::string& input_path)
@@ -365,4 +400,30 @@ void Game::nuevoBloque()
         // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
         m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
     }
+}
+
+string gameTipoAString(CandyType type) //func auxiliar para el dump
+{
+    switch (type)
+    {
+    case CandyType::TYPE_BLUE:   return "AZUL";
+    case CandyType::TYPE_GREEN:  return "VERDE";
+    case CandyType::TYPE_ORANGE: return "NARANJA";
+    case CandyType::TYPE_PURPLE: return "LILA";
+    case CandyType::TYPE_RED:    return "ROJO";
+    case CandyType::TYPE_YELLOW: return "AMARILLO";
+    default:                     return "DESCONOCIDO";
+    }
+}
+
+CandyType gameStringATipo(const std::string& type) //func auxiliar para el load
+{
+    if (type == "AZUL") return CandyType::TYPE_BLUE;
+    if (type == "VERDE") return CandyType::TYPE_GREEN;
+    if (type == "NARANJA") return CandyType::TYPE_ORANGE;
+    if (type == "LILA") return CandyType::TYPE_PURPLE;
+    if (type == "ROJO") return CandyType::TYPE_RED;
+    if (type == "AMARILLO") return CandyType::TYPE_YELLOW;
+
+    return CandyType::COUNT;
 }
