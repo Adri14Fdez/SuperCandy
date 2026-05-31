@@ -40,7 +40,7 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 ## OBLIGATORIO
 - [X] Generación aleatoria de piezas de bloqueCaramelo.
 - [X] Hacer condicion Game Over.
-- [ ] Metodos de guardar y cargar partida.
+- [X] Metodos de guardar y cargar partida.
 - [X] Metodos de comparacion de Games.
 - [ ] Cargar partida desde fichero.
 - [ ] Tests de la clase Game.
@@ -52,3 +52,4 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
 - [ ] Sistema puntuacion avanzada (combos, patrones, etc).
+- [ ] Añadir notificacion para cuando se guarda o carga una partida.

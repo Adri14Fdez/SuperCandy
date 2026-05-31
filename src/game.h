@@ -77,7 +77,12 @@ private:
     void moverDer(const Controller& controller);
     void moverAbajo(const Controller& controller);
     void rotarCaramelos(const Controller& controller);
+    void pauseCheck(const Controller& controller);
+    void saveAndLoad(const Controller& controller);
     bool checkGameOver();
     void nuevoBloque();
+
+    string gameTipoAString(CandyType type) const; //func auxiliar para el dump
+    CandyType gameStringATipo(const std::string& type) const; //func auxiliar para el load
 };
 #endif

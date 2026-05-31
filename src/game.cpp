@@ -3,6 +3,8 @@
 #include "graphics.h"
 #include "candy.h"
 #include <fstream>
+#include <string>
+#include "util.h"
 
 Game::Game()
 {
@@ -50,25 +52,14 @@ void Game::update(const Controller& controller)
         return;
     }
 
-    if (m_pause)
-    {
-        if (controller.isMouseRightPressed())
-        {
-            m_pause = false;
-        }
-    }
-    else
-    {
-        if (controller.isMouseRightPressed())
-        {
-            m_pause = true;
-        }
-    }
+    saveAndLoad(controller);
+
+    pauseCheck(controller);
 
     if (m_pause)
     {
         return;
-    }
+    }  
 
     m_frameCounter++;
 
@@ -140,11 +131,11 @@ void Game::render(GraphicManager& graphics)
     // Title [draw images]
     graphics.drawImage("img/logo_small.png", 10, 10);
     // Score and footer [draw text]
-    graphics.drawText("Movement: [Up] [Down] [Left] [Right]  --  "
-                      "Buttons: [Q] [W] [E]  --  Exit [ESC]",
+    graphics.drawText("Movement: [Down] [Left] [Right]  --  "
+                      "Rotate: [Q] -- Pause: [E]  --  Exit [ESC]",
                       25, 700, 20, 100, 100, 100);
     graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
-    graphics.drawText("Pause: [Mouse Right]", 25, 675, 20, 100, 100, 100);
+    graphics.drawText("Save: [Mouse Left] -- Load: [Mouse Right]", 25, 675, 20, 100, 100, 100);
     graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
 
     if (m_pause)
@@ -203,31 +194,29 @@ bool Game::dump(const std::string& output_path) const
         return false; //si no encuentra el archivo devuelve false
     }
 
-    ofstream fitxer;
-    fitxer.open(output_path, std::ofstream::app); //usamos app de append, para que los datos del tablero que ya estaban no se borren
-
-    if (fitxer.is_open())
+    ofstream gameDump(output_path, std::ofstream::app); //usamos app de append, para que los datos del tablero que ya estaban no se borren
+    if (gameDump.is_open())
     {
-        fitxer << "SCORE " << m_score << "\n";
-        fitxer << "FRAME " << m_frameCounter << "\n";
-        fitxer << "BLOCKX " << m_blockX << "\n";
-        fitxer << "BLOCKY " << m_blockY << "\n";
-        fitxer << "GAMEOVER " << m_gameOver << "\n";
-        fitxer << "PAUSE " << m_pause << "\n";
+        gameDump << "SCORE " << m_score << "\n";
+        gameDump << "FRAME " << m_frameCounter << "\n";
+        gameDump << "BLOCKX " << m_blockX << "\n";
+        gameDump << "BLOCKY " << m_blockY << "\n";
+        gameDump << "GAMEOVER " << m_gameOver << "\n";
+        gameDump << "PAUSE " << m_pause << "\n";
 
         for (int i = 0; i < 3; i++) 
         {
             if (m_bloqueCaramelos[i] != nullptr)
             {
-                fitxer << "CANDY" << i << " " << gameTipoAString(m_bloqueCaramelos[i]->getType()) << "\n";
+                gameDump << "CANDY" << i << " " << gameTipoAString(m_bloqueCaramelos[i]->getType()) << "\n";
             }
             else
             {
-                fitxer << "CANDY" << i << "VACIO\n"; //por si acaso no hay caramelo
+                gameDump << "CANDY" << i << "VACIO\n"; //por si acaso no hay caramelo
             }
         }
 
-        fitxer.close();
+        gameDump.close();
         return true;
     }
 
@@ -238,6 +227,119 @@ bool Game::dump(const std::string& output_path) const
 bool Game::load(const std::string& input_path)
 {
     // Implement your code here
+    ifstream gameLoad(input_path);
+
+    // Solo se ejecuta si se ha podido abrir bien el archivo.
+    if (gameLoad)
+    {
+        // Borramos todo lo que habia en el tablero.
+        for (int i = 0; i < 3; i++)
+        {
+            Candy* actual = m_bloqueCaramelos[i];
+            if (actual != nullptr)
+            {
+                delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+                m_bloqueCaramelos[i] = nullptr;
+            }
+        }
+
+        for (int c = 0; c < m_tablero.getWidth(); c++)
+        {
+            for (int f = 0; f < m_tablero.getHeight(); f++)
+            {
+                Candy* actual = m_tablero.getCell(c, f);
+                if (actual != nullptr)
+                {
+                    delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
+                    m_tablero.setCell(nullptr, c, f);
+                }
+            }
+        }
+
+        string clave;
+        int c, f;
+
+        //El bucle se repite mientras queden lineas por leer.
+        while (gameLoad >> clave)
+        {
+            // Dependiendo del "titulo" que lea establecemos una variable o no.
+            if (clave == "SCORE")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_score = temp;
+            }
+            else if (clave == "FRAME")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_frameCounter = temp;
+            }
+            else if (clave == "BLOCKX")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_blockX = temp;
+            }
+            else if (clave == "BLOCKY")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_blockY = temp;
+            }
+            else if (clave == "GAMEOVER")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_gameOver = temp;
+            }
+            else if (clave == "PAUSE")
+            {
+                int temp;
+                gameLoad >> temp;
+                m_pause = temp;
+            }
+            else if (clave == "CANDY0")
+            {
+                string temp;
+                gameLoad >> temp;
+                m_bloqueCaramelos[0] = new Candy(gameStringATipo(temp));
+            }
+            else if (clave == "CANDY1")
+            {
+                string temp;
+                gameLoad >> temp;
+                m_bloqueCaramelos[1] = new Candy(gameStringATipo(temp));
+            }
+            else if (clave == "CANDY2")
+            {
+                string temp;
+                gameLoad >> temp;
+                m_bloqueCaramelos[2] = new Candy(gameStringATipo(temp));
+            } else
+            {
+                // Antes usaba m_tablero.load(input_path) pero el gemini me decia
+                // que de esa forma se abre el archivo por segunda vez y se corromperia,
+                // entonces he copiado el Board::load aqui y ya :/
+                gameLoad >> c >> f;
+                CandyType tipoEnum = gameStringATipo(clave);
+
+                if (tipoEnum != CandyType::COUNT)
+                {
+                    Candy* nuevoCaramelo = new Candy(tipoEnum);
+                    m_tablero.setCell(nuevoCaramelo, c, f);
+                }
+            }
+        }
+
+        gameLoad.close();
+        return true;
+    }
+    else
+    {
+        cout << "Error de apertura del archivo." << endl;
+        return false;
+    }
     return false;
 }
 
@@ -358,6 +460,37 @@ void Game::rotarCaramelos(const Controller& controller)
     }
 }
 
+void Game::pauseCheck(const Controller& controller)
+{
+    if (m_pause)
+    {
+        if (controller.isKey3Pressed())
+        {
+            m_pause = false;
+        }
+    }
+    else
+    {
+        if (controller.isKey3Pressed())
+        {
+            m_pause = true;
+        }
+    }
+}
+
+void Game::saveAndLoad(const Controller& controller)
+{
+    if (controller.isMouseLeftPressed())
+    {
+        dump(getDataDirPath() + "/test_dump.txt");
+    }
+
+    if (controller.isMouseRightPressed())
+    {
+        load(getDataDirPath() + "/test_dump.txt");
+    }
+}
+
 bool Game::checkGameOver()
 {
     bool piezaFuera = false;
@@ -402,7 +535,7 @@ void Game::nuevoBloque()
     }
 }
 
-string gameTipoAString(CandyType type) //func auxiliar para el dump
+string Game::gameTipoAString(CandyType type) const //func auxiliar para el dump
 {
     switch (type)
     {
@@ -416,7 +549,7 @@ string gameTipoAString(CandyType type) //func auxiliar para el dump
     }
 }
 
-CandyType gameStringATipo(const std::string& type) //func auxiliar para el load
+CandyType Game::gameStringATipo(const std::string& type) const //func auxiliar para el load
 {
     if (type == "AZUL") return CandyType::TYPE_BLUE;
     if (type == "VERDE") return CandyType::TYPE_GREEN;
