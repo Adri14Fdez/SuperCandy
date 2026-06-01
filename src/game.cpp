@@ -1,5 +1,4 @@
 #include "game.h"
-#include <random>
 #include "graphics.h"
 #include "candy.h"
 #include <fstream>
@@ -17,13 +16,12 @@ Game::Game()
 
     //Generar los caramelos aleatoriamente
 
-    std::random_device rd; //Genera una semilla random
-    std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
+    srand(time(NULL));
     int numAleatorio = 0;
 
     for (int i = 0; i < 3; i++)
     {
-        numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
+        numAleatorio = rand() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
 
         // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
         m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
@@ -522,13 +520,12 @@ void Game::nuevoBloque()
 
     //Generar otra vez los caramelos aleatoriamente
 
-    std::random_device rd; //Genera una semilla random
-    std::mt19937 gen(rd()); //Con la semilla generamos el número aleatorio
+    srand(time(NULL));
     int numAleatorio = 0;
 
     for (int i = 0; i < 3; i++)
     {
-        numAleatorio = gen() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
+        numAleatorio = rand() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
 
         // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
         m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
