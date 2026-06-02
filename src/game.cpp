@@ -71,8 +71,7 @@ void Game::update(const Controller& controller)
                 // Liberamos la memoria de los caramelos que acaban de explotar
                 for (size_t i = 0; i < caramelosExplotados.size(); i++)
                 {
-                    m_explodedCandiesCount[static_cast<int>(caramelosExplotados[i]->getType())]++;
-                    delete caramelosExplotados[i];
+                    m_stats.addExplodedCandy(caramelosExplotados[i]->getType());
                 }
 
                 m_bloqueCaramelos.nuevoBloque();
@@ -116,12 +115,12 @@ void Game::render(GraphicManager& graphics)
 
     // Dibuja las estadisticas
     graphics.drawText("Explotados:", 7, 200, 24, 100, 100, 100);
-    graphics.drawText("Rojos: " + to_string(m_explodedCandiesCount[0]), 7, 230, 20, 255, 0, 0);
-    graphics.drawText("Azules: " + to_string(m_explodedCandiesCount[1]), 7, 260, 20, 0, 0, 255);
-    graphics.drawText("Verdes: " + to_string(m_explodedCandiesCount[2]), 7, 290, 20, 0, 200, 0);
-    graphics.drawText("Amarillos: " + to_string(m_explodedCandiesCount[3]), 7, 320, 20, 200, 200, 0);
-    graphics.drawText("Lilas: " + to_string(m_explodedCandiesCount[4]), 7, 350, 20, 128, 0, 128);
-    graphics.drawText("Naranjas: " + to_string(m_explodedCandiesCount[5]), 7, 380, 20, 255, 165, 0);
+    graphics.drawText("Rojos: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(0))), 7, 230, 20, 255, 0, 0);
+    graphics.drawText("Azules: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(1))), 7, 260, 20, 0, 0, 255);
+    graphics.drawText("Verdes: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(2))), 7, 290, 20, 0, 200, 0);
+    graphics.drawText("Amarillos: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(3))), 7, 320, 20, 200, 200, 0);
+    graphics.drawText("Lilas: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(4))), 7, 350, 20, 128, 0, 128);
+    graphics.drawText("Naranjas: " + to_string(m_stats.getCandyCount(static_cast<CandyType>(5))), 7, 380, 20, 255, 165, 0);
 
     // Dibuja los caramelos del tablero
     for (int x = 0; x < m_tablero.getWidth(); x++)
@@ -184,10 +183,7 @@ bool Game::dump(const std::string& output_path) const
         gameDump << "GAMEOVER " << m_gameOver << "\n";
         gameDump << "PAUSE " << m_pause << "\n";
 
-        for (int i = 0; i < 6; i++) 
-        {
-            gameDump << "STAT" << i << " " << m_explodedCandiesCount[i] << "\n";
-        }
+        m_stats.dump(gameDump);
 
         for (int i = 0; i < 3; i++) 
         {
@@ -218,9 +214,7 @@ bool Game::load(const std::string& input_path)
     if (gameLoad)
     {
         // Reiniciamos las estadisticas
-        for (int i = 0; i < 6; i++) {
-            m_explodedCandiesCount[i] = 0;
-        }
+        m_stats.reset();
 
         // Borramos todo lo que habia en el tablero.
         for (int i = 0; i < 3; i++)
@@ -305,6 +299,8 @@ bool Game::load(const std::string& input_path)
             {
                 string temp;
                 gameLoad >> temp;
+                m_bloqueCaramelos[2] = new Candy(gameStringATipo(temp));
+            }else if (clave.substr(0, 4) == "STAT")
                 m_bloqueCaramelos.setCandy(2, new Candy(gameStringATipo(temp)));
             }
             else if (clave == "STAT0")
@@ -313,23 +309,7 @@ bool Game::load(const std::string& input_path)
             }
             else if (clave == "STAT1")
             {
-                gameLoad >> m_explodedCandiesCount[1];
-            }
-            else if (clave == "STAT2")
-            {
-                gameLoad >> m_explodedCandiesCount[2];
-            }
-            else if (clave == "STAT3")
-            {
-                gameLoad >> m_explodedCandiesCount[3];
-            }
-            else if (clave == "STAT4")
-            {
-                gameLoad >> m_explodedCandiesCount[4];
-            }
-            else if (clave == "STAT5")
-            {
-                gameLoad >> m_explodedCandiesCount[5];
+                m_stats.load(gameLoad, clave);
             }
             else
             {

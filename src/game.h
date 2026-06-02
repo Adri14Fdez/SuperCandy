@@ -9,6 +9,7 @@
 
 #include "candy.h"
 #include "board.h"
+#include "stats.h"
 #include "bloque.h"
 
 /**
@@ -63,7 +64,7 @@ private:
     int m_score = 0;
     
     // Estadisticas: numero de caramelos explotados de cada tipo
-    int m_explodedCandiesCount[6] = {0};
+    Stats m_stats;
 
     Bloque m_bloqueCaramelos;
 
