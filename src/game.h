@@ -9,6 +9,7 @@
 
 #include "candy.h"
 #include "board.h"
+#include "bloque.h"
 
 /**
  * Main game class: keep track of the game state it. 
@@ -64,9 +65,7 @@ private:
     // Estadisticas: numero de caramelos explotados de cada tipo
     int m_explodedCandiesCount[6] = {0};
 
-    int m_blockX;
-    int m_blockY;
-    Candy* m_bloqueCaramelos[3];
+    Bloque m_bloqueCaramelos;
 
     bool m_gameOver = false;
     bool m_pause = false;
@@ -76,14 +75,9 @@ private:
     int m_limIzq = 0;
     int m_limSuelo = m_tablero.getHeight() - 3;
 
-    void moverIzq(const Controller& controller);
-    void moverDer(const Controller& controller);
-    void moverAbajo(const Controller& controller);
-    void rotarCaramelos(const Controller& controller);
     void pauseCheck(const Controller& controller);
     void saveAndLoad(const Controller& controller);
     bool checkGameOver();
-    void nuevoBloque();
 
     string gameTipoAString(CandyType type) const; //func auxiliar para el dump
     CandyType gameStringATipo(const std::string& type) const; //func auxiliar para el load

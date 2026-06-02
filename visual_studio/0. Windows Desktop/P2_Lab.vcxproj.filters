@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\src\util.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bloque.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\board.h">
@@ -118,6 +121,9 @@
       <Filter>test</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\util.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bloque.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

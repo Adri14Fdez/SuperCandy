@@ -11,34 +11,13 @@ Game::Game()
     m_frameCounter = 0;
     m_gameOver = false;
 
-    m_blockX = 5;
-    m_blockY = -3;
-
     //Generar los caramelos aleatoriamente
-
-    srand(time(NULL));
-    int numAleatorio = 0;
-
-    for (int i = 0; i < 3; i++)
-    {
-        numAleatorio = rand() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
-
-        // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
-        m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
-    }
+    m_bloqueCaramelos.nuevoBloque();
 }
 
 Game::~Game()
 {
     // Implement your code here
-    for (int i = 0; i < 3; i++)
-    {
-        if (m_bloqueCaramelos[i] != nullptr)
-        {
-            delete m_bloqueCaramelos[i];
-            m_bloqueCaramelos[i] = nullptr;
-        }
-    }
 }
 
 void Game::update(const Controller& controller)
@@ -61,24 +40,16 @@ void Game::update(const Controller& controller)
 
     m_frameCounter++;
 
-    moverIzq(controller);
-    moverDer(controller);
-    moverAbajo(controller);
-    rotarCaramelos(controller);
+    m_bloqueCaramelos.moverIzq(controller, m_tablero, m_limIzq, m_limDer);
+    m_bloqueCaramelos.moverDer(controller, m_tablero, m_limIzq, m_limDer);
+    m_bloqueCaramelos.moverAbajo(controller, m_tablero, m_limSuelo);
+    m_bloqueCaramelos.rotarCaramelos(controller);
 
     if (m_frameCounter % 60 == 0)
     {
-        bool puedeCaer = true;
-        int bottomY = m_blockY + 3;
-
-        if (m_blockY >= m_limSuelo || bottomY >= 0 && m_tablero.getCell(m_blockX, bottomY) != nullptr)
+        if (m_bloqueCaramelos.puedeCaer(m_tablero, m_limSuelo))
         {
-            puedeCaer = false;
-        }
-
-        if (puedeCaer)
-        {
-            m_blockY++;
+            m_bloqueCaramelos.setY(m_bloqueCaramelos.getY() + 1);
         }
         else
         {
@@ -86,9 +57,9 @@ void Game::update(const Controller& controller)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    m_tablero.setCell(m_bloqueCaramelos[i], m_blockX, m_blockY + i);
-                    delete m_bloqueCaramelos[i];
-                    m_bloqueCaramelos[i] = nullptr;
+                    m_tablero.setCell(m_bloqueCaramelos.getCandy(i), m_bloqueCaramelos.getX(), m_bloqueCaramelos.getY() + i);
+                    delete m_bloqueCaramelos.getCandy(i);
+                    m_bloqueCaramelos.setCandy(i, nullptr);
                 }
 
                 // Explotamos los caramelos y los guardamos en un vector
@@ -104,11 +75,11 @@ void Game::update(const Controller& controller)
                     delete caramelosExplotados[i];
                 }
 
-                nuevoBloque();
+                m_bloqueCaramelos.nuevoBloque();
             }            
         }
 
-        cout << "X: " << m_blockX << " Y: " << m_blockY << endl;
+        cout << "X: " << m_bloqueCaramelos.getX() << " Y: " << m_bloqueCaramelos.getY() << endl;
     }
 }
 
@@ -131,7 +102,7 @@ void Game::render(GraphicManager& graphics)
     // Title [draw images]
     graphics.drawImage("img/logo_small.png", 10, 10);
     // Score and footer [draw text]
-    graphics.drawText("Movement: [Down] [Left] [Right]  --  "
+    graphics.drawText("Movement: [↓] [←] [→]  --  "
                       "Rotate: [Q] -- Pause: [E]  --  Exit [ESC]",
                       25, 700, 20, 100, 100, 100);
     graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
@@ -140,17 +111,17 @@ void Game::render(GraphicManager& graphics)
 
     if (m_pause)
     {
-        graphics.drawText("PAUSA", 15, 150, 32, 125, 200, 125);
+        graphics.drawText("PAUSA", 15, 130, 32, 125, 200, 125);
     }
 
     // Dibuja las estadisticas
-    graphics.drawText("Explotados:", 7, 170, 24, 100, 100, 100);
-    graphics.drawText("Rojos: " + to_string(m_explodedCandiesCount[0]), 7, 200, 20, 255, 0, 0);
-    graphics.drawText("Azules: " + to_string(m_explodedCandiesCount[1]), 7, 230, 20, 0, 0, 255);
-    graphics.drawText("Verdes: " + to_string(m_explodedCandiesCount[2]), 7, 260, 20, 0, 200, 0);
-    graphics.drawText("Amarillos: " + to_string(m_explodedCandiesCount[3]), 7, 290, 20, 200, 200, 0);
-    graphics.drawText("Lilas: " + to_string(m_explodedCandiesCount[4]), 7, 320, 20, 128, 0, 128);
-    graphics.drawText("Naranjas: " + to_string(m_explodedCandiesCount[5]), 7, 350, 20, 255, 165, 0);
+    graphics.drawText("Explotados:", 7, 200, 24, 100, 100, 100);
+    graphics.drawText("Rojos: " + to_string(m_explodedCandiesCount[0]), 7, 230, 20, 255, 0, 0);
+    graphics.drawText("Azules: " + to_string(m_explodedCandiesCount[1]), 7, 260, 20, 0, 0, 255);
+    graphics.drawText("Verdes: " + to_string(m_explodedCandiesCount[2]), 7, 290, 20, 0, 200, 0);
+    graphics.drawText("Amarillos: " + to_string(m_explodedCandiesCount[3]), 7, 320, 20, 200, 200, 0);
+    graphics.drawText("Lilas: " + to_string(m_explodedCandiesCount[4]), 7, 350, 20, 128, 0, 128);
+    graphics.drawText("Naranjas: " + to_string(m_explodedCandiesCount[5]), 7, 380, 20, 255, 165, 0);
 
     // Dibuja los caramelos del tablero
     for (int x = 0; x < m_tablero.getWidth(); x++)
@@ -170,12 +141,12 @@ void Game::render(GraphicManager& graphics)
     // Dibuja los caramelos del bloqueCaramelos
     for (int i = 0; i < 3; i++)
     {
-        if (m_bloqueCaramelos[i] != nullptr)
+        if (m_bloqueCaramelos.getCandy(i) != nullptr)
         {
-            int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (m_blockX * CANDY_IMAGE_WIDTH);
-            int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + ((m_blockY + i) * CANDY_IMAGE_HEIGHT);
+            int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (m_bloqueCaramelos.getX() * CANDY_IMAGE_WIDTH);
+            int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + ((m_bloqueCaramelos.getY() + i) * CANDY_IMAGE_HEIGHT);
 
-            graphics.drawImage(m_bloqueCaramelos[i]->getResourceName(), pixelX, pixelY);
+            graphics.drawImage(m_bloqueCaramelos.getCandy(i)->getResourceName(), pixelX, pixelY);
         }
     }
 
@@ -208,8 +179,8 @@ bool Game::dump(const std::string& output_path) const
     {
         gameDump << "SCORE " << m_score << "\n";
         gameDump << "FRAME " << m_frameCounter << "\n";
-        gameDump << "BLOCKX " << m_blockX << "\n";
-        gameDump << "BLOCKY " << m_blockY << "\n";
+        gameDump << "BLOCKX " << m_bloqueCaramelos.getX() << "\n";
+        gameDump << "BLOCKY " << m_bloqueCaramelos.getX() << "\n";
         gameDump << "GAMEOVER " << m_gameOver << "\n";
         gameDump << "PAUSE " << m_pause << "\n";
 
@@ -220,9 +191,9 @@ bool Game::dump(const std::string& output_path) const
 
         for (int i = 0; i < 3; i++) 
         {
-            if (m_bloqueCaramelos[i] != nullptr)
+            if (m_bloqueCaramelos.getCandy(i) != nullptr)
             {
-                gameDump << "CANDY" << i << " " << gameTipoAString(m_bloqueCaramelos[i]->getType()) << "\n";
+                gameDump << "CANDY" << i << " " << gameTipoAString(m_bloqueCaramelos.getCandy(i)->getType()) << "\n";
             }
             else
             {
@@ -254,11 +225,11 @@ bool Game::load(const std::string& input_path)
         // Borramos todo lo que habia en el tablero.
         for (int i = 0; i < 3; i++)
         {
-            Candy* actual = m_bloqueCaramelos[i];
+            Candy* actual = m_bloqueCaramelos.getCandy(i);
             if (actual != nullptr)
             {
                 delete actual; // Como usamos memoria dinamica al cargar, tenemos que borrarlo manualmente.
-                m_bloqueCaramelos[i] = nullptr;
+                m_bloqueCaramelos.setCandy(i, nullptr);
             }
         }
 
@@ -298,13 +269,13 @@ bool Game::load(const std::string& input_path)
             {
                 int temp;
                 gameLoad >> temp;
-                m_blockX = temp;
+                m_bloqueCaramelos.setX(temp);
             }
             else if (clave == "BLOCKY")
             {
                 int temp;
                 gameLoad >> temp;
-                m_blockY = temp;
+                m_bloqueCaramelos.setY(temp);
             }
             else if (clave == "GAMEOVER")
             {
@@ -322,19 +293,19 @@ bool Game::load(const std::string& input_path)
             {
                 string temp;
                 gameLoad >> temp;
-                m_bloqueCaramelos[0] = new Candy(gameStringATipo(temp));
+                m_bloqueCaramelos.setCandy(0, new Candy(gameStringATipo(temp)));
             }
             else if (clave == "CANDY1")
             {
                 string temp;
                 gameLoad >> temp;
-                m_bloqueCaramelos[1] = new Candy(gameStringATipo(temp));
+                m_bloqueCaramelos.setCandy(1, new Candy(gameStringATipo(temp)));
             }
             else if (clave == "CANDY2")
             {
                 string temp;
                 gameLoad >> temp;
-                m_bloqueCaramelos[2] = new Candy(gameStringATipo(temp));
+                m_bloqueCaramelos.setCandy(2, new Candy(gameStringATipo(temp)));
             }
             else if (clave == "STAT0")
             {
@@ -397,8 +368,8 @@ bool Game::operator==(const Game& other) const
     if ((m_gameOver != other.m_gameOver) ||
         ( m_score != other.m_score) ||
         (m_frameCounter != other.m_frameCounter) ||
-        (m_blockX != other.m_blockX) ||
-        (m_blockY != other.m_blockY) ||
+        (m_bloqueCaramelos.getX() != other.m_bloqueCaramelos.getX()) ||
+        (m_bloqueCaramelos.getY() != other.m_bloqueCaramelos.getY()) ||
         (m_pause != other.m_pause))
     {
         esIgual = false;
@@ -407,8 +378,8 @@ bool Game::operator==(const Game& other) const
     // Comprobar bloqueCaramelos
     for (int i = 0; i < 3 && esIgual; i++)
     {
-        Candy* miCaramelo = m_bloqueCaramelos[i];
-        Candy* suCaramelo = other.m_bloqueCaramelos[i];
+        Candy* miCaramelo = m_bloqueCaramelos.getCandy(i);
+        Candy* suCaramelo = other.m_bloqueCaramelos.getCandy(i);
 
         if ((miCaramelo == nullptr && suCaramelo != nullptr) ||
             (miCaramelo != nullptr && suCaramelo == nullptr))
@@ -431,78 +402,6 @@ bool Game::operator==(const Game& other) const
     }
 
     return esIgual;
-}
-
-void Game::moverIzq(const Controller& controller)
-{
-    if (controller.isLeftPressed())
-    {
-        bool posible = true;
-        for (int i = 0; i < 3; i++)
-        {
-            if (m_tablero.getCell(m_blockX -1, m_blockY + i) != nullptr)
-            {
-                posible = false;
-            }
-        }
-
-        if (m_blockX <= m_limIzq || m_blockX > m_limDer)
-        {
-            posible = false;
-        }
-
-        if (posible)
-        {
-            m_blockX--;
-        }
-    }
-}
-
-void Game::moverDer(const Controller& controller)
-{
-    if (controller.isRightPressed())
-    {
-        bool posible = true;
-        for (int i = 0; i < 3; i++)
-        {
-            if (m_tablero.getCell(m_blockX + 1, m_blockY + i) != nullptr)
-            {
-                posible = false;
-            }
-        }
-
-        if (m_blockX < m_limIzq || m_blockX >= m_limDer)
-        {
-            posible = false;
-        }
-
-        if (posible)
-        {
-            m_blockX++;
-        }
-    }
-}
-
-void Game::moverAbajo(const Controller& controller)
-{
-    if (controller.isDownPressed())
-    {
-        if (m_blockY < m_limSuelo && m_tablero.getCell(m_blockX, m_blockY + 3) == nullptr)
-        {
-            m_blockY++;
-        }
-    }
-}
-
-void Game::rotarCaramelos(const Controller& controller)
-{
-    if (controller.isKey1Pressed())
-    {
-        Candy* aux = m_bloqueCaramelos[0];
-        m_bloqueCaramelos[0] = m_bloqueCaramelos[1];
-        m_bloqueCaramelos[1] = m_bloqueCaramelos[2];
-        m_bloqueCaramelos[2] = aux;
-    }
 }
 
 void Game::pauseCheck(const Controller& controller)
@@ -542,13 +441,13 @@ bool Game::checkGameOver()
 
     for (int i = 0; i < 3; i++)
     {
-        int posPieza = m_blockY + i;
+        int posPieza = m_bloqueCaramelos.getY() + i;
 
         if (posPieza < 0)
         {
             piezaFuera = true;
-            delete m_bloqueCaramelos[i];
-            m_bloqueCaramelos[i] = nullptr;
+            delete m_bloqueCaramelos.getCandy(i);
+            m_bloqueCaramelos.setCandy(i, nullptr);
         }
     }
 
@@ -558,25 +457,6 @@ bool Game::checkGameOver()
     }
 
     return m_gameOver;
-}
-
-void Game::nuevoBloque()
-{
-    m_blockX = 5;
-    m_blockY = -3;
-
-    //Generar otra vez los caramelos aleatoriamente
-
-    srand(time(NULL));
-    int numAleatorio = 0;
-
-    for (int i = 0; i < 3; i++)
-    {
-        numAleatorio = rand() % 6; //Hacemos el módulo del número aleatorio con 6, para que nos de 1, 2, 3, 4 o 5.
-
-        // Convertimos ese número entero a un tipo de caramelo (CandyType) y lo creamos
-        m_bloqueCaramelos[i] = new Candy(CandyType(numAleatorio));
-    }
 }
 
 string Game::gameTipoAString(CandyType type) const //func auxiliar para el dump
