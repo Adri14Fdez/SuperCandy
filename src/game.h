@@ -61,6 +61,9 @@ private:
     int m_frameCounter = 0;
     int m_score = 0;
     
+    // Estadisticas: numero de caramelos explotados de cada tipo
+    int m_explodedCandiesCount[6] = {0};
+
     int m_blockX;
     int m_blockY;
     Candy* m_bloqueCaramelos[3];

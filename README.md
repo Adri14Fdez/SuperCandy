@@ -47,7 +47,7 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [ ] Identificar lo de los conceptos nuevos aprendidos. 
 
 ## EXTRA
-- [ ] Estadistica de caramelos rotos. 
+- [X] Estadistica de caramelos rotos. 
 - [X] Mecanismo de pausa.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
