@@ -40,8 +40,8 @@ void Game::update(const Controller& controller)
 
     m_frameCounter++;
 
-    m_bloqueCaramelos.moverIzq(controller, m_tablero, m_limIzq, m_limDer);
-    m_bloqueCaramelos.moverDer(controller, m_tablero, m_limIzq, m_limDer);
+    m_bloqueCaramelos.moverIzq(controller, m_tablero, m_limIzq);
+    m_bloqueCaramelos.moverDer(controller, m_tablero, m_limDer);
     m_bloqueCaramelos.moverAbajo(controller, m_tablero, m_limSuelo);
     m_bloqueCaramelos.rotarCaramelos(controller);
 
@@ -180,7 +180,7 @@ bool Game::dump(const std::string& output_path) const
         gameDump << "SCORE " << m_score << "\n";
         gameDump << "FRAME " << m_frameCounter << "\n";
         gameDump << "BLOCKX " << m_bloqueCaramelos.getX() << "\n";
-        gameDump << "BLOCKY " << m_bloqueCaramelos.getX() << "\n";
+        gameDump << "BLOCKY " << m_bloqueCaramelos.getY() << "\n";
         gameDump << "GAMEOVER " << m_gameOver << "\n";
         gameDump << "PAUSE " << m_pause << "\n";
 

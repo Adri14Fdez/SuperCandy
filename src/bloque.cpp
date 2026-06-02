@@ -40,7 +40,7 @@ bool Bloque::puedeCaer(const Board& tablero, int lim)
     bool puedeCaer = true;
     int bottomBloque = m_y + 3;
 
-    if (m_y >= lim || bottomBloque >= 0 && tablero.getCell(m_x, bottomBloque) != nullptr)
+    if (m_y >= lim || (bottomBloque >= 0 && tablero.getCell(m_x, bottomBloque) != nullptr))
     {
         puedeCaer = false;
     }
@@ -48,7 +48,7 @@ bool Bloque::puedeCaer(const Board& tablero, int lim)
     return puedeCaer;
 }
 
-void Bloque::moverIzq(const Controller& controller, const Board& tablero, int limIzq, int limDer)
+void Bloque::moverIzq(const Controller& controller, const Board& tablero, int limIzq)
 {
     if (controller.isLeftPressed())
     {
@@ -61,7 +61,7 @@ void Bloque::moverIzq(const Controller& controller, const Board& tablero, int li
             }
         }
 
-        if (m_x <= limIzq || m_x > limDer)
+        if (m_x <= limIzq)
         {
             posible = false;
         }
@@ -73,7 +73,7 @@ void Bloque::moverIzq(const Controller& controller, const Board& tablero, int li
     }
 }
 
-void Bloque::moverDer(const Controller& controller, const Board& tablero, int limIzq, int limDer)
+void Bloque::moverDer(const Controller& controller, const Board& tablero, int limDer)
 {
     if (controller.isRightPressed())
     {
@@ -86,7 +86,7 @@ void Bloque::moverDer(const Controller& controller, const Board& tablero, int li
             }
         }
 
-        if (m_x < limIzq || m_x >= limDer)
+        if (m_x >= limDer)
         {
             posible = false;
         }

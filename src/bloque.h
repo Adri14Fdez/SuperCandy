@@ -22,8 +22,8 @@ public:
 
     bool puedeCaer(const Board& tablero, int lim);
     void moverAbajo(const Controller& controller, const Board& tablero, int limSuelo);
-    void moverIzq(const Controller& controller, const Board& tablero, int limIzq, int limDer);
-    void moverDer(const Controller& controller, const Board& tablero, int limIzq, int limDer);
+    void moverIzq(const Controller& controller, const Board& tablero, int limIzq);
+    void moverDer(const Controller& controller, const Board& tablero, int limDer);
     void rotarCaramelos(const Controller& controller);
 private:
     Candy* m_bloqueCaramelos[3];
