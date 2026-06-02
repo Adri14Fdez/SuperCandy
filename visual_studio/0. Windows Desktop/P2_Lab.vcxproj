@@ -169,6 +169,7 @@
     <ClCompile Include="..\..\src\private\sdl_wrapper\sprites.cpp" />
     <ClCompile Include="..\..\src\private\sdl_wrapper\stb_vorbis.cpp" />
     <ClCompile Include="..\..\src\private\sdl_wrapper\video.cpp" />
+    <ClCompile Include="..\..\src\stats.cpp" />
     <ClCompile Include="..\..\src\util.cpp" />
     <ClCompile Include="..\..\test\test.cpp" />
   </ItemGroup>
@@ -193,6 +194,7 @@
     <ClInclude Include="..\..\src\private\sdl_wrapper\sprites.h" />
     <ClInclude Include="..\..\src\private\sdl_wrapper\stb_vorbis.h" />
     <ClInclude Include="..\..\src\private\sdl_wrapper\video.h" />
+    <ClInclude Include="..\..\src\stats.h" />
     <ClInclude Include="..\..\src\util.h" />
     <ClInclude Include="..\..\test\test.h" />
   </ItemGroup>
