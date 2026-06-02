@@ -98,17 +98,6 @@ void Bloque::moverDer(const Controller& controller, const Board& tablero, int li
     }
 }
 
-void Bloque::moverAbajo(const Controller& controller, const Board& tablero, int limSuelo)
-{
-    if (controller.isDownPressed())
-    {
-        if (m_y < limSuelo && tablero.getCell(m_x, m_y + 3) == nullptr)
-        {
-            m_y++;
-        }
-    }
-}
-
 void Bloque::rotarCaramelos(const Controller& controller)
 {
     if (controller.isKey1Pressed())

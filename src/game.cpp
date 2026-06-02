@@ -10,9 +10,9 @@ Game::Game()
     // Implement your code here
     m_frameCounter = 0;
     m_gameOver = false;
-
-    //Generar los caramelos aleatoriamente
-    m_bloqueCaramelos.nuevoBloque();
+    
+    // Al instanciar m_bloqueCaramelos, su propio constructor 
+    // ya se ha encargado de generar los caramelos iniciales.
 }
 
 Game::~Game()
@@ -42,10 +42,12 @@ void Game::update(const Controller& controller)
 
     m_bloqueCaramelos.moverIzq(controller, m_tablero, m_limIzq);
     m_bloqueCaramelos.moverDer(controller, m_tablero, m_limDer);
-    m_bloqueCaramelos.moverAbajo(controller, m_tablero, m_limSuelo);
     m_bloqueCaramelos.rotarCaramelos(controller);
 
-    if (m_frameCounter % 60 == 0)
+    //Decidimos si el bloque debe caer en este frame (por gravedad normal o por pulsar abajo)
+    bool tocaCaer = (m_frameCounter % 60 == 0) || controller.isDownPressed();
+
+    if (tocaCaer)
     {
         if (m_bloqueCaramelos.puedeCaer(m_tablero, m_limSuelo))
         {
@@ -106,7 +108,7 @@ void Game::render(GraphicManager& graphics)
                       "Rotate: [Q] -- Pause: [E]  --  Exit [ESC]",
                       25, 700, 20, 100, 100, 100);
     graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
-    graphics.drawText("Save: [Mouse Left] -- Load: [Mouse Right]", 25, 675, 20, 100, 100, 100);
+    graphics.drawText("Save: [W] -- Load: [Mouse Right]", 25, 675, 20, 100, 100, 100);
     graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
 
     if (m_pause)
@@ -424,14 +426,14 @@ void Game::pauseCheck(const Controller& controller)
 
 void Game::saveAndLoad(const Controller& controller)
 {
-    if (controller.isMouseLeftPressed())
+    if (controller.isKey2Pressed())
     {
-        dump(getDataDirPath() + "/test_dump.txt");
+        dump(getDataDirPath() + "/save.txt");
     }
 
     if (controller.isMouseRightPressed())
     {
-        load(getDataDirPath() + "/test_dump.txt");
+        load(getDataDirPath() + "/save.txt");
     }
 }
 

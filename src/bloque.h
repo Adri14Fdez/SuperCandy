@@ -21,7 +21,6 @@ public:
     void setCandy(int index, Candy* candy) { m_bloqueCaramelos[index] = candy; }
 
     bool puedeCaer(const Board& tablero, int lim);
-    void moverAbajo(const Controller& controller, const Board& tablero, int limSuelo);
     void moverIzq(const Controller& controller, const Board& tablero, int limIzq);
     void moverDer(const Controller& controller, const Board& tablero, int limDer);
     void rotarCaramelos(const Controller& controller);
