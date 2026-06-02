@@ -65,10 +65,17 @@ Candy* Board::getCell(int x, int y) const
 
 void Board::setCell(Candy* candy, int x, int y)
 {
-    // Acualiza la celda solo si las coordenadas son válidas.
+    // Actualiza la celda solo si las coordenadas son válidas.
     if (x >= 0 && x < boardX && y >= 0 && y < boardY)
     {
-        grid[x][y] = candy;
+        if (candy != nullptr)
+        {
+            grid[x][y] = new Candy(candy->getType());
+        }
+        else
+        {
+            grid[x][y] = nullptr;
+        }
     }
 }
 
@@ -274,6 +281,7 @@ std::vector<Candy*> Board::explodeAndDrop()
                         if(getCell(x,k) != nullptr)
                         {
                             setCell(getCell(x,k), x, y);
+                            delete getCell(x, k);
                             setCell(nullptr, x, k);
                             break;
                         }
@@ -377,6 +385,7 @@ bool Board::load(const std::string& input_path)
             {
                 Candy* nuevoCaramelo = new Candy(tipoEnum); // El "new" hace que no se destruya el objeto al salir del bucle.
                 setCell(nuevoCaramelo, c, f);
+                delete nuevoCaramelo;
             }
         }
 

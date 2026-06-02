@@ -87,6 +87,7 @@ void Game::update(const Controller& controller)
                 for (int i = 0; i < 3; i++)
                 {
                     m_tablero.setCell(m_bloqueCaramelos[i], m_blockX, m_blockY + i);
+                    delete m_bloqueCaramelos[i];
                     m_bloqueCaramelos[i] = nullptr;
                 }
 
@@ -210,7 +211,7 @@ bool Game::dump(const std::string& output_path) const
             }
             else
             {
-                gameDump << "CANDY" << i << "VACIO\n"; //por si acaso no hay caramelo
+                gameDump << "CANDY" << i << " VACIO\n"; //por si acaso no hay caramelo
             }
         }
 
@@ -326,6 +327,7 @@ bool Game::load(const std::string& input_path)
                 {
                     Candy* nuevoCaramelo = new Candy(tipoEnum);
                     m_tablero.setCell(nuevoCaramelo, c, f);
+                    delete nuevoCaramelo;
                 }
             }
         }
