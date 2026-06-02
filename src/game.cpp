@@ -10,7 +10,7 @@ Game::Game()
     // Implement your code here
     m_frameCounter = 0;
     m_gameOver = false;
-    
+
     // Al instanciar m_bloqueCaramelos, su propio constructor 
     // ya se ha encargado de generar los caramelos iniciales.
 }
@@ -60,7 +60,6 @@ void Game::update(const Controller& controller)
                 for (int i = 0; i < 3; i++)
                 {
                     m_tablero.setCell(m_bloqueCaramelos.getCandy(i), m_bloqueCaramelos.getX(), m_bloqueCaramelos.getY() + i);
-                    delete m_bloqueCaramelos.getCandy(i);
                     m_bloqueCaramelos.setCandy(i, nullptr);
                 }
 
@@ -345,7 +344,6 @@ bool Game::load(const std::string& input_path)
                 {
                     Candy* nuevoCaramelo = new Candy(tipoEnum);
                     m_tablero.setCell(nuevoCaramelo, c, f);
-                    delete nuevoCaramelo;
                 }
             }
         }
