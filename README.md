@@ -43,7 +43,7 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [X] Metodos de guardar y cargar partida.
 - [X] Metodos de comparacion de Games.
 - [X] Cargar partida desde fichero.
-- [ ] Tests de la clase Game.
+- [X] Tests de la clase Game.
 - [ ] Identificar lo de los conceptos nuevos aprendidos. 
 
 ## EXTRA

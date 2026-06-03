@@ -15,12 +15,12 @@ bool test() {
 
         if (tableroGHGW.getHeight() != 10)
         {
-            cout << "Fallo en getHeight." << endl;
+            cout << "!!! Fallo en getHeight." << endl;
             todoCorrecto = false;
         }
         else if (tableroGHGW.getWidth() != 10)
         {
-            cout << "Fallo en getWidth." << endl;
+            cout << "!!! Fallo en getWidth." << endl;
             todoCorrecto = false;
         }
         else
@@ -43,7 +43,7 @@ bool test() {
             }
         }
         if (!todoVacio) {
-            cout << "Fallo: El constructor no inicializa todas las celdas a nullptr." << endl;
+            cout << "!!! Fallo: El constructor no inicializa todas las celdas a nullptr." << endl;
             todoCorrecto = false;
         }
         else {
@@ -61,15 +61,18 @@ bool test() {
 
             Candy* carameloRojo = new Candy(CandyType::TYPE_RED);
             tableroGCSCV.setCell(carameloRojo, 5, 5);
-            if (tableroGCSCV.getCell(5, 5) == carameloRojo)
+            
+            Candy* recuperado = tableroGCSCV.getCell(5,5);
+            if (recuperado != nullptr && recuperado->getType() == carameloRojo->getType())
             {
                 cout << "setCell y getCell funcionan en casos validos." << endl;
             }
             else
             {
-                cout << "setCell y getCell fallan en casos validos." << endl;
+                cout << "!!! setCell y getCell fallan en casos validos." << endl;
                 todoCorrecto = false;
             }
+            delete carameloRojo;
         }
         cout << "--------------------------------------------------" << endl;
 
@@ -86,7 +89,7 @@ bool test() {
             }
             else
             {
-                cout << "setCell y getCell fallan en casos invalidos negativos." << endl;
+                cout << "!!! setCell y getCell fallan en casos invalidos negativos." << endl;
                 todoCorrecto = false;
             }
 
@@ -98,7 +101,7 @@ bool test() {
             }
             else
             {
-                cout << "setCell y getCell fallan en casos invalidos mayores." << endl;
+                cout << "!!! setCell y getCell fallan en casos invalidos mayores." << endl;
                 todoCorrecto = false;
             }
 
@@ -128,7 +131,7 @@ bool test() {
                 }
                 else
                 {
-                    cout << "shouldExplode falla en casos validos horizontales." << endl;
+                    cout << "!!! shouldExplode falla en casos validos horizontales." << endl;
                     todoCorrecto = false;
                 }
             }
@@ -148,7 +151,7 @@ bool test() {
                 }
                 else
                 {
-                    cout << "shouldExplode falla en casos validos verticales." << endl;
+                    cout << "!!! shouldExplode falla en casos validos verticales." << endl;
                     todoCorrecto = false;
                 }
             }
@@ -168,7 +171,7 @@ bool test() {
                 }
                 else
                 {
-                    cout << "shouldExplode falla en casos validos diagonal (\\)." << endl;
+                    cout << "!!! shouldExplode falla en casos validos diagonal (\\)." << endl;
                     todoCorrecto = false;
                 }
             }
@@ -188,7 +191,7 @@ bool test() {
                 }
                 else
                 {
-                    cout << "shouldExplode falla en casos validos diagonal (/)." << endl;
+                    cout << "!!! shouldExplode falla en casos validos diagonal (/)." << endl;
                     todoCorrecto = false;
                 }
             }
@@ -203,7 +206,7 @@ bool test() {
 
                 if (tableroSECV.shouldExplode(0, 0))
                 {
-                    cout << "shouldExplode falla en casos invalidos con coordenada vacia." << endl;
+                    cout << "!!! shouldExplode falla en casos invalidos con coordenada vacia." << endl;
                     todoCorrecto = false;
                 }
                 else {
@@ -229,7 +232,7 @@ bool test() {
 
                 if (tableroSECR.shouldExplode(5, 5))
                 {
-                    cout << "shouldExplode falla en casos invalidos con caramelo rodeado de otros caramelos." << endl;
+                    cout << "!!! shouldExplode falla en casos invalidos con caramelo rodeado de otros caramelos." << endl;
                     todoCorrecto = false;
                 }
                 else {
@@ -266,16 +269,22 @@ bool test() {
             // Comprobamos que el vector contiene el numero de caramelos que deberian explotar.
             if (destruidos.size() != 3)
             {
-                cout << "explodeAndDrop falla porque el vector devuelto no tiene 3 elementos (tiene " << destruidos.size() << ")." << endl;
+                cout << "!!! explodeAndDrop falla porque el vector devuelto no tiene 3 elementos (tiene " << destruidos.size() << ")." << endl;
                 todoCorrecto = false;
             }
 
             // Comprobamos que las posiciones destruidas han quedado ocupadas por los caramelos que caian 
             // y que las posiciones origen de los caramelos que caian han quedado vacias.
-            if (tableroEAD.getCell(5, 9) != cae1 || tableroEAD.getCell(6, 9) != cae2 || tableroEAD.getCell(7, 9) != nullptr
-                || tableroEAD.getCell(5, 8) != nullptr || tableroEAD.getCell(6, 8) != nullptr)
+            Candy* recuperado1 = tableroEAD.getCell(5, 9);
+            Candy* recuperado2 = tableroEAD.getCell(6, 9);
+
+            if (recuperado1 == nullptr || recuperado1->getType() != CandyType::TYPE_BLUE ||
+                recuperado2 == nullptr || recuperado2->getType() != CandyType::TYPE_GREEN || 
+                tableroEAD.getCell(7, 9) != nullptr ||
+                tableroEAD.getCell(5, 8) != nullptr || 
+                tableroEAD.getCell(6, 8) != nullptr)
             {
-                cout << "explodeAndDrop falla porque los caramelos no han caido correctamente." << endl;
+                cout << "!!! explodeAndDrop falla porque los caramelos no han caido correctamente." << endl;
                 todoCorrecto = false;
             }
             else
@@ -312,12 +321,12 @@ bool test() {
 
             if (destruidosRC.size() != 6)
             {
-                cout << "explodeAndDrop falla en la reaccion en cadena. De 6 destruidos, ha destruido " << destruidosRC.size() << "." << endl;
+                cout << "!!! explodeAndDrop falla en la reaccion en cadena. De 6 destruidos, ha destruido " << destruidosRC.size() << "." << endl;
                 todoCorrecto = false;
             }
             else if (tableroRC.getCell(4, 9) != nullptr || tableroRC.getCell(5, 9) != nullptr || tableroRC.getCell(6, 9) != nullptr)
             {
-                cout << "explodeAndDrop falla porque los caramelos de la reaccion en cadena no desaparecieron del tablero." << endl;
+                cout << "!!! explodeAndDrop falla porque los caramelos de la reaccion en cadena no desaparecieron del tablero." << endl;
                 todoCorrecto = false;
             }
             else
@@ -358,7 +367,7 @@ bool test() {
                 tableroDL.getCell(6, 7)->getType() != tableroDL2.getCell(6, 7)->getType() || 
                 tableroDL.getCell(8, 9)->getType() != tableroDL2.getCell(8, 9)->getType())
             {
-                cout << "dump y load fallan al guardar y cargar." << endl;
+                cout << "!!! dump y load fallan al guardar y cargar." << endl;
                 todoCorrecto = false;
             }
             else
@@ -375,7 +384,7 @@ bool test() {
             // Intentamos cargar un archivo que no existe
             if (tableroDL.load(inputPath) == true)
             {
-                cout << "load falla al cargar un archivo inexistente." << endl;
+                cout << "!!! load falla al cargar un archivo inexistente." << endl;
                 todoCorrecto = false;
             }
             else
@@ -386,29 +395,120 @@ bool test() {
     }
     cout << "--------------------------------------------------" << endl;
 
-    // Test operator== clase Game **NO ACABADOOOOOOOOOOOO** (creo jsjs)
+    // Test operator== clase Board
     {
-        Game g1, g2;
-        if (g1 == g2)
-        {
-            cout << "g1 igual a g2 cuando no deberia." << endl;
-            todoCorrecto = false;
+            Board tablero1(10, 10);
+            Board tablero2(10, 10);
+            
+            tablero1.setCell(new Candy(CandyType::TYPE_RED), 5, 5);
+            tablero2.setCell(new Candy(CandyType::TYPE_RED), 5, 5);
+            
+            if (!(tablero1 == tablero2))
+            {
+                cout << "!!! Fallo: tableros identicos detectados como distintos." << endl;
+                todoCorrecto = false;
+            }
+            
+            tablero2.setCell(new Candy(CandyType::TYPE_BLUE), 5, 6);
+            
+            if (tablero1 == tablero2)
+            {
+                cout << "!!! Fallo: tableros distintos detectados como iguales." << endl;
+                todoCorrecto = false;
+            }
+            else
+            {
+                cout << "operator== de Board funciona correctamente." << endl;
+            }
         }
-        else
-        {
-            cout << "g1 diferente a g2 perfe." << endl;
-        }
+    cout << "--------------------------------------------------" << endl;
 
-        if (g1 == g1)
+    // Test clase Game
+    {
+            Game g1;
+            string testPath = getDataDirPath() + "/test_game_dump.txt";
+            
+            g1.dump(testPath);
+            
+            Game g2;
+            g2.load(testPath);
+            
+            if (g1 == g2)
+            {
+                cout << "dump, load y operator== de Game funcionan correctamente." << endl;
+            }
+            else
+            {
+                cout << "!!! Fallo en dump o load o en operator== de Game." << endl;
+                todoCorrecto = false;
+            }
+        }
+    cout << "--------------------------------------------------" << endl;
+
+    // Test clase Stats
+    {
+        Stats estadisticas;
+        estadisticas.addCandy(CandyType::TYPE_RED);
+        estadisticas.addCandy(CandyType::TYPE_RED);
+        estadisticas.addCandy(CandyType::TYPE_BLUE);
+        
+        if (estadisticas.getCount(static_cast<int>(CandyType::TYPE_RED)) != 2 || 
+            estadisticas.getCount(static_cast<int>(CandyType::TYPE_BLUE)) != 1)
         {
-            cout << "g1 es igual a g1 correcto" << endl;
+            cout << "!!! Fallo en Stats al contar." << endl;
+            todoCorrecto = false;
         }
         else
         {
-            cout << "g1 NO es igual a g1 MAL" << endl;
+            cout << "Stats cuenta correctamente." << endl;
+        }
+        
+        estadisticas.reset();
+        
+        if (estadisticas.getCount(static_cast<int>(CandyType::TYPE_RED)) != 0 ||
+            estadisticas.getCount(static_cast<int>(CandyType::TYPE_BLUE)) != 0)
+        {
+            cout << "!!! Fallo en Stats al hacer reset." << endl;
             todoCorrecto = false;
+        }
+        else
+        {
+            cout << "Stats hace reset correctamente." << endl;
         }
     }
+    cout << "--------------------------------------------------" << endl;
 
+    // Test clase Bloque
+    {
+        Bloque bloquePrueba;
+        Board tableroVacio(10, 10);
+        
+        bloquePrueba.setY(10 - 3);
+        
+        if (bloquePrueba.puedeCaer(tableroVacio, 10 - 3))
+        {
+            cout << "!!! Fallo: el bloque cae traspasando el limite del suelo." << endl;
+            todoCorrecto = false;
+        }
+        else
+        {
+            cout << "Bloque detecta el suelo correctamente." << endl;
+        }
+        
+        bloquePrueba.setY(0);
+        tableroVacio.setCell(new Candy(CandyType::TYPE_RED), bloquePrueba.getX(), 3);
+        
+        if (bloquePrueba.puedeCaer(tableroVacio, 10 - 3))
+        {
+            cout << "!!! Fallo: el bloque cae traspasando caramelos del tablero." << endl;
+            todoCorrecto = false;
+        }
+        else
+        {
+            cout << "Bloque detecta colisiones con otros caramelos correctamente." << endl;
+        }
+    }
+    cout << "--------------------------------------------------" << endl;
+    
     return todoCorrecto;
 }
