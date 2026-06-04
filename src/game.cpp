@@ -239,7 +239,6 @@ bool Game::load(const std::string& input_path)
 		}
 
 		string clave;
-		int c, f;
 
         // El bucle se repite mientras queden lineas por leer.
 		while (gameLoad >> clave)
