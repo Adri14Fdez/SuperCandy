@@ -9,6 +9,9 @@ Game::Game()
 {
 	m_frameCounter = 0;
 	m_gameOver = false;
+
+    // Al instanciar m_bloqueCaramelos, su propio constructor 
+    // ya se ha encargado de generar los caramelos iniciales.
 }
 
 Game::~Game()
@@ -37,6 +40,7 @@ void Game::update(const Controller& controller)
 	m_bloqueCaramelos.moverDer(controller, m_tablero, m_limDer);
 	m_bloqueCaramelos.rotarCaramelos(controller);
 
+	//Decidimos si el bloque debe caer en este frame (por gravedad normal o por pulsar abajo)
 	bool tocaCaer = (m_frameCounter % 60 == 0) || controller.isDownPressed();
 
 	if (tocaCaer)
@@ -55,10 +59,13 @@ void Game::update(const Controller& controller)
 					m_bloqueCaramelos.setCandy(i, nullptr);
 				}
 
+				// Explotamos los caramelos y los guardamos en un vector.
 				std::vector<Candy*> caramelosExplotados = m_tablero.explodeAndDrop();
 
+				//Actualizar el score.
 				m_score += (caramelosExplotados.size() * 10);
 
+				// Liberamos la memoria de los caramelos que acaban de explotar.
 				for (size_t i = 0; i < caramelosExplotados.size(); i++)
 				{
 					m_stats.addCandy(caramelosExplotados[i]->getType());
@@ -75,6 +82,11 @@ void Game::update(const Controller& controller)
 
 void Game::render(GraphicManager& graphics)
 {
+    // Note: the following code exhibits the main graphic library features
+    // Board: border [draw rectangles] and a single piece of candy
+
+    // Con board_size = m_tablero.getHeight() conseguimos que si el tablero tiene una
+    // medida diferente se sigan dibujando bien los limites.
 	const int board_size = m_tablero.getHeight();
 	const int board_padding = 3;
 	graphics.drawRectangle(
@@ -96,6 +108,7 @@ void Game::render(GraphicManager& graphics)
 		graphics.drawText("PAUSA", 15, 130, 32, 125, 200, 125);
 	}
 
+    // Dibuja las estadisticas
 	graphics.drawText("Explotados:", 7, 200, 24, 100, 100, 100);
 	graphics.drawText("Rojos: " + to_string(m_stats.getCount(0)), 7, 230, 20, 255, 0, 0);
 	graphics.drawText("Azules: " + to_string(m_stats.getCount(1)), 7, 260, 20, 0, 0, 255);
@@ -104,6 +117,7 @@ void Game::render(GraphicManager& graphics)
 	graphics.drawText("Lilas: " + to_string(m_stats.getCount(4)), 7, 350, 20, 128, 0, 128);
 	graphics.drawText("Naranjas: " + to_string(m_stats.getCount(5)), 7, 380, 20, 255, 165, 0);
 
+    // Dibuja los caramelos del tablero.
 	for (int x = 0; x < m_tablero.getWidth(); x++)
 	{
 		for (int y = 0; y < m_tablero.getHeight(); y++)
@@ -118,6 +132,7 @@ void Game::render(GraphicManager& graphics)
 		}
 	}
 
+    // Dibuja los caramelos del bloqueCaramelos
 	for (int i = 0; i < 3; i++)
 	{
 		if (m_bloqueCaramelos.getCandy(i) != nullptr)
@@ -148,10 +163,12 @@ bool Game::dump(const std::string& output_path) const
 {
 	if (!m_tablero.dump(output_path))
 	{
-		return false;
+		return false; // Si no encuentra el archivo devuelve false
 	}
 
-	ofstream gameDump(output_path, std::ofstream::app);
+	// Usamos app de append, para que los datos del tablero que ya estaban no se borren.
+	ofstream gameDump(output_path, std::ofstream::app); 
+	
 	if (gameDump.is_open())
 	{
 		gameDump << "SCORE " << m_score << "\n";
@@ -171,7 +188,7 @@ bool Game::dump(const std::string& output_path) const
 			}
 			else
 			{
-				gameDump << "CANDY" << i << " VACIO\n";
+				gameDump << "CANDY" << i << " VACIO\n"; // Por si acaso no hay caramelo.
 			}
 		}
 
@@ -185,12 +202,19 @@ bool Game::dump(const std::string& output_path) const
 
 bool Game::load(const std::string& input_path)
 {
+	if (!m_tablero.load(input_path))
+	{
+		return false;
+	}
+
 	ifstream gameLoad(input_path);
 
+	// Solo se ejecuta si se ha podido abrir bien el archivo.
 	if (gameLoad)
 	{
 		m_stats.reset();
 
+		// Borramos todo lo que habia en el bloqueCaramelos.
 		for (int i = 0; i < 3; i++)
 		{
 			Candy* actual = m_bloqueCaramelos.getCandy(i);
@@ -201,24 +225,13 @@ bool Game::load(const std::string& input_path)
 			}
 		}
 
-		for (int c = 0; c < m_tablero.getWidth(); c++)
-		{
-			for (int f = 0; f < m_tablero.getHeight(); f++)
-			{
-				Candy* actual = m_tablero.getCell(c, f);
-				if (actual != nullptr)
-				{
-					delete actual;
-					m_tablero.setCell(nullptr, c, f);
-				}
-			}
-		}
-
 		string clave;
 		int c, f;
 
+        // El bucle se repite mientras queden lineas por leer.
 		while (gameLoad >> clave)
 		{
+            // Dependiendo del "titulo" que lea establecemos una variable o no.
 			if (clave == "SCORE")
 			{
 				int temp;
@@ -312,17 +325,6 @@ bool Game::load(const std::string& input_path)
 				gameLoad >> count;
 				m_stats.setCount(5, count);
 			}
-			else
-			{
-				gameLoad >> c >> f;
-				CandyType tipoEnum = gameStringATipo(clave);
-
-				if (tipoEnum != CandyType::COUNT)
-				{
-					Candy* nuevoCaramelo = new Candy(tipoEnum);
-					m_tablero.setCell(nuevoCaramelo, c, f);
-				}
-			}
 		}
 
 		gameLoad.close();
@@ -340,6 +342,7 @@ bool Game::operator==(const Game& other) const
 {
 	bool esIgual = true;
 
+	// Comprobar variables basicas
 	if ((m_gameOver != other.m_gameOver) ||
 		(m_score != other.m_score) ||
 		(m_frameCounter != other.m_frameCounter) ||
@@ -350,6 +353,7 @@ bool Game::operator==(const Game& other) const
 		esIgual = false;
 	}
 
+	// Comprobar las estadisticas
 	for (int i = 0; i < 6 && esIgual; i++)
 	{
 		if (m_stats.getCount(i) != other.m_stats.getCount(i))
@@ -358,6 +362,7 @@ bool Game::operator==(const Game& other) const
 		}
 	}
 
+	// Comprobar el bloque de caramelos
 	for (int i = 0; i < 3 && esIgual; i++)
 	{
 		Candy* miCaramelo = m_bloqueCaramelos.getCandy(i);
@@ -377,6 +382,7 @@ bool Game::operator==(const Game& other) const
 		}
 	}
 
+	// Comprobar el tablero
 	if (!(m_tablero == other.m_tablero))
 	{
 		esIgual = false;
@@ -440,6 +446,7 @@ bool Game::checkGameOver()
 	return m_gameOver;
 }
 
+// Funcion auxiliar que convierte un tipo de caramelo a string.
 string Game::gameTipoAString(CandyType type) const
 {
 	switch (type)
@@ -454,6 +461,7 @@ string Game::gameTipoAString(CandyType type) const
 	}
 }
 
+// Funcion auxiliar que convierte un string a tipo de caramelo.
 CandyType Game::gameStringATipo(const std::string& type) const
 {
 	if (type == "AZUL") return CandyType::TYPE_BLUE;
