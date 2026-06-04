@@ -25,6 +25,12 @@ void Game::update(const Controller& controller)
 		return;
 	}
 
+	// Va reduciendo el tiempo de las notificaciones.
+	if (m_temporizadorNotificacion > 0)
+    {
+        m_temporizadorNotificacion--;
+    }
+
 	saveAndLoad(controller);
 
 	pauseCheck(controller);
@@ -143,6 +149,13 @@ void Game::render(GraphicManager& graphics)
 		}
 	}
 
+	// Dibujar notificaciones
+	if (m_temporizadorNotificacion > 0)
+    {
+        graphics.drawText(m_mensajeNotificacion, m_posNotX, m_posNotY, 24, 255, 0, 0);
+    }
+
+	// Dibujar GAME OVER
 	if (m_gameOver)
 	{
 		graphics.drawText("HAS PERDIDO", 160, 300, 64, 255, 0, 0);
@@ -414,11 +427,21 @@ void Game::saveAndLoad(const Controller& controller)
 	if (controller.isKey2Pressed())
 	{
 		dump(getDataDirPath() + "/save.txt");
+
+		m_mensajeNotificacion = "PARTIDA GUARDADA";
+        m_temporizadorNotificacion = 120;
+		m_posNotX = 250;
+		m_posNotY = 620;
 	}
 
 	if (controller.isMouseRightPressed())
 	{
 		load(getDataDirPath() + "/save.txt");
+
+		m_mensajeNotificacion = "PARTIDA CARGADA";
+        m_temporizadorNotificacion = 120;
+		m_posNotX = 250;
+		m_posNotY = 620;
 	}
 }
 

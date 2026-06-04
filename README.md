@@ -44,12 +44,12 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [X] Metodos de comparacion de Games.
 - [X] Cargar partida desde fichero.
 - [X] Tests de la clase Game.
-- [ ] Identificar lo de los conceptos nuevos aprendidos. 
+- [X] Identificar lo de los conceptos nuevos aprendidos. 
 
 ## EXTRA
 - [X] Estadistica de caramelos rotos. 
 - [X] Mecanismo de pausa.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
-- [ ] Sistema puntuacion avanzada (combos, patrones, etc).
-- [ ] Añadir notificacion para cuando se guarda o carga una partida.
+- [ ] Sistema puntuacion avanzada (combos, patrones, etc). (No se puede porque el explodeAndDrop() no puede ser modificado añadiendole parametros)
+- [X] Añadir notificacion para cuando se guarda o carga una partida.

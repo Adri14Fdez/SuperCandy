@@ -80,6 +80,11 @@ private:
     void saveAndLoad(const Controller& controller);
     bool checkGameOver();
 
+    string m_mensajeNotificacion = "";
+    int m_temporizadorNotificacion = 0;
+    int m_posNotX = 250;
+    int m_posNotY = 620;
+
     string gameTipoAString(CandyType type) const; //func auxiliar para el dump
     CandyType gameStringATipo(const std::string& type) const; //func auxiliar para el load
 };
