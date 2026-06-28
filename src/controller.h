@@ -22,11 +22,11 @@ public:
     /// @return whether the "right" arrow has been pressed this frame
     bool isRightPressed() const;
     /// @return whether action button 1 has been pressed this frame
-    bool isKey1Pressed() const;
+    bool isKeyQPressed() const;
     /// @return whether action button 2 has been pressed this frame
-    bool isKey2Pressed() const;
+    bool isKeyWPressed() const;
     /// @return whether action button 3 has been pressed this frame
-    bool isKey3Pressed() const;
+    bool isKeyEPressed() const;
     /// @return the current mouse x position, relative to the game window
     int getMouseX() const;
     /// @return the current mouse y position, relative to the game window
@@ -41,7 +41,7 @@ private:
     enum Index
     {
         UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3,
-        KEY1 = 4, KEY2 = 5, KEY3 = 6,
+        KEYQ = 4, KEYW = 5, KEYE = 6,
         MOUSE_LEFT = 7, MOUSE_RIGHT = 8,
         COUNT = 9
     };

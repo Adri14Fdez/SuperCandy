@@ -70,6 +70,7 @@ private:
 
     bool m_gameOver = false;
     bool m_pause = false;
+    int m_pausePos = 0;
 
     Board m_tablero;
     int m_limDer = m_tablero.getWidth() - 1;
@@ -77,8 +78,11 @@ private:
     int m_limSuelo = m_tablero.getHeight() - 3;
 
     void pauseCheck(const Controller& controller);
+    void pauseMenu(const Controller& controller);
     void saveAndLoad(const Controller& controller);
     bool checkGameOver();
+
+    void reiniciarPartida();
 
     string m_mensajeNotificacion = "";
     int m_temporizadorNotificacion = 0;

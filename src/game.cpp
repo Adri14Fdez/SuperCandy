@@ -37,6 +37,7 @@ void Game::update(const Controller& controller)
 
 	if (m_pause)
 	{
+		pauseMenu(controller);
 		return;
 	}
 
@@ -95,71 +96,86 @@ void Game::render(GraphicManager& graphics)
     // medida diferente se sigan dibujando bien los limites.
 	const int board_size = m_tablero.getHeight();
 	const int board_padding = 3;
-	graphics.drawRectangle(
-		CANDY_IMAGE_HEIGHT * board_padding, CANDY_IMAGE_HEIGHT * board_padding,
-		CANDY_IMAGE_WIDTH * board_size,
-		CANDY_IMAGE_HEIGHT * board_size,
-		5, 150, 150, 150);
-
-	graphics.drawImage("img/logo_small.png", 10, 10);
-	graphics.drawText("Movement: [↓] [←] [→]  --  "
-		"Rotate: [Q] -- Pause: [E]  --  Exit [ESC]",
-		25, 700, 20, 100, 100, 100);
-	graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
-	graphics.drawText("Save: [W] -- Load: [Mouse Right]", 25, 675, 20, 100, 100, 100);
-	graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
-
-	if (m_pause)
-	{
-		graphics.drawText("PAUSA", 15, 130, 32, 125, 200, 125);
-	}
-
-    // Dibuja las estadisticas
-	graphics.drawText("Explotados:", 7, 200, 24, 100, 100, 100);
-	graphics.drawText("Rojos: " + to_string(m_stats.getCount(0)), 7, 230, 20, 255, 0, 0);
-	graphics.drawText("Azules: " + to_string(m_stats.getCount(1)), 7, 260, 20, 0, 0, 255);
-	graphics.drawText("Verdes: " + to_string(m_stats.getCount(2)), 7, 290, 20, 0, 200, 0);
-	graphics.drawText("Amarillos: " + to_string(m_stats.getCount(3)), 7, 320, 20, 200, 200, 0);
-	graphics.drawText("Lilas: " + to_string(m_stats.getCount(4)), 7, 350, 20, 128, 0, 128);
-	graphics.drawText("Naranjas: " + to_string(m_stats.getCount(5)), 7, 380, 20, 255, 165, 0);
-
-    // Dibuja los caramelos del tablero.
-	for (int x = 0; x < m_tablero.getWidth(); x++)
-	{
-		for (int y = 0; y < m_tablero.getHeight(); y++)
-		{
-			Candy* candy = m_tablero.getCell(x, y);
-			if (candy != nullptr)
-			{
-				int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (x * CANDY_IMAGE_WIDTH);
-				int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + (y * CANDY_IMAGE_HEIGHT);
-				graphics.drawImage(candy->getResourceName(), pixelX, pixelY);
-			}
-		}
-	}
-
-    // Dibuja los caramelos del bloqueCaramelos
-	for (int i = 0; i < 3; i++)
-	{
-		if (m_bloqueCaramelos.getCandy(i) != nullptr)
-		{
-			int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (m_bloqueCaramelos.getX() * CANDY_IMAGE_WIDTH);
-			int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + ((m_bloqueCaramelos.getY() + i) * CANDY_IMAGE_HEIGHT);
-			graphics.drawImage(m_bloqueCaramelos.getCandy(i)->getResourceName(), pixelX, pixelY);
-		}
-	}
-
-	// Dibujar notificaciones
-	if (m_temporizadorNotificacion > 0)
-    {
-        graphics.drawText(m_mensajeNotificacion, m_posNotX, m_posNotY, 24, 255, 0, 0);
-    }
-
 	// Dibujar GAME OVER
 	if (m_gameOver)
 	{
 		graphics.drawText("HAS PERDIDO", 160, 300, 64, 255, 0, 0);
 	}
+
+	if (m_pause)
+	{
+		graphics.drawText("MENU DE PAUSA", 175, 200, 48);
+		if (m_pausePos == 0) graphics.drawText("Continuar", 300, 300, 32, 255, 0, 0);
+		else graphics.drawText("Continuar", 300, 300, 32, 0, 0, 0);
+
+		if (m_pausePos == 1) graphics.drawText("Cargar", 300, 350, 32, 255, 0, 0);
+		else graphics.drawText("Cargar", 300, 350, 32, 0, 0, 0);
+
+		if (m_pausePos == 2) graphics.drawText("Reiniciar", 300, 400, 32, 255, 0, 0);
+		else graphics.drawText("Reiniciar", 300, 400, 32, 0, 0, 0);
+
+		if (m_pausePos == 3) graphics.drawText("Salir", 300, 450, 32, 255, 0, 0);
+		else graphics.drawText("Salir", 300, 450, 32, 0, 0, 0);
+	}
+	else
+	{
+		graphics.drawRectangle(
+			CANDY_IMAGE_HEIGHT * board_padding, CANDY_IMAGE_HEIGHT * board_padding,
+			CANDY_IMAGE_WIDTH * board_size,
+			CANDY_IMAGE_HEIGHT * board_size,
+			5, 150, 150, 150);
+
+		graphics.drawImage("img/logo_small.png", 10, 10);
+		graphics.drawText("Movement: [↓] [←] [→]  --  "
+			"Rotate: [Q] -- Pause: [E]  --  Exit [ESC]",
+			25, 700, 20, 100, 100, 100);
+		graphics.drawText("Score: " + to_string(m_score), 450, 10, 54, 125, 200, 125);
+		graphics.drawText("Save: [W] -- Load: [Mouse Right]", 25, 675, 20, 100, 100, 100);
+		graphics.drawText("Segundos: " + to_string(m_frameCounter / 60), 25, 650, 20, 100, 100, 100);
+
+
+
+		// Dibuja las estadisticas
+		graphics.drawText("Explotados:", 7, 200, 24, 100, 100, 100);
+		graphics.drawText("Rojos: " + to_string(m_stats.getCount(0)), 7, 230, 20, 255, 0, 0);
+		graphics.drawText("Azules: " + to_string(m_stats.getCount(1)), 7, 260, 20, 0, 0, 255);
+		graphics.drawText("Verdes: " + to_string(m_stats.getCount(2)), 7, 290, 20, 0, 200, 0);
+		graphics.drawText("Amarillos: " + to_string(m_stats.getCount(3)), 7, 320, 20, 200, 200, 0);
+		graphics.drawText("Lilas: " + to_string(m_stats.getCount(4)), 7, 350, 20, 128, 0, 128);
+		graphics.drawText("Naranjas: " + to_string(m_stats.getCount(5)), 7, 380, 20, 255, 165, 0);
+
+		// Dibuja los caramelos del tablero.
+		for (int x = 0; x < m_tablero.getWidth(); x++)
+		{
+			for (int y = 0; y < m_tablero.getHeight(); y++)
+			{
+				Candy* candy = m_tablero.getCell(x, y);
+				if (candy != nullptr)
+				{
+					int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (x * CANDY_IMAGE_WIDTH);
+					int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + (y * CANDY_IMAGE_HEIGHT);
+					graphics.drawImage(candy->getResourceName(), pixelX, pixelY);
+				}
+			}
+		}
+
+		// Dibuja los caramelos del bloqueCaramelos
+		for (int i = 0; i < 3; i++)
+		{
+			if (m_bloqueCaramelos.getCandy(i) != nullptr)
+			{
+				int pixelX = (CANDY_IMAGE_WIDTH * board_padding) + (m_bloqueCaramelos.getX() * CANDY_IMAGE_WIDTH);
+				int pixelY = (CANDY_IMAGE_HEIGHT * board_padding) + ((m_bloqueCaramelos.getY() + i) * CANDY_IMAGE_HEIGHT);
+				graphics.drawImage(m_bloqueCaramelos.getCandy(i)->getResourceName(), pixelX, pixelY);
+			}
+		}
+
+		// Dibujar notificaciones
+		if (m_temporizadorNotificacion > 0)
+		{
+			graphics.drawText(m_mensajeNotificacion, m_posNotX, m_posNotY, 24, 255, 0, 0);
+		}		
+	}	
 }
 
 void Game::run()
@@ -407,23 +423,55 @@ void Game::pauseCheck(const Controller& controller)
 {
 	if (m_pause)
 	{
-		if (controller.isKey3Pressed())
+		if (controller.isKeyEPressed())
 		{
 			m_pause = false;
+			switch (m_pausePos)
+			{
+			case 0:
+				break;
+			case 1:
+				load(getDataDirPath() + "/save.txt");
+
+				m_mensajeNotificacion = "PARTIDA CARGADA";
+				m_temporizadorNotificacion = 120;
+				m_posNotX = 250;
+				m_posNotY = 620;
+				break;
+			case 2:
+				reiniciarPartida();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	else
 	{
-		if (controller.isKey3Pressed())
+		if (controller.isKeyEPressed())
 		{
 			m_pause = true;
+			m_pausePos = 0;
 		}
+	}
+}
+
+void Game::pauseMenu(const Controller& controller)
+{
+	if (controller.isDownPressed() && m_pausePos < 3)
+	{
+		m_pausePos++;
+	}
+
+	if (controller.isUpPressed() && m_pausePos > 0)
+	{
+		m_pausePos--;
 	}
 }
 
 void Game::saveAndLoad(const Controller& controller)
 {
-	if (controller.isKey2Pressed())
+	if (controller.isKeyWPressed())
 	{
 		dump(getDataDirPath() + "/save.txt");
 
@@ -466,6 +514,40 @@ bool Game::checkGameOver()
 	}
 
 	return m_gameOver;
+}
+
+void Game::reiniciarPartida()
+{
+	m_score = 0;
+	m_frameCounter = 0;
+	m_gameOver = false;
+	m_pause = false;
+	m_temporizadorNotificacion = 0;
+
+	m_stats.reset();
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_bloqueCaramelos.getCandy(i) != nullptr)
+		{
+			delete m_bloqueCaramelos.getCandy(i);
+			m_bloqueCaramelos.setCandy(i, nullptr);
+		}
+	}
+	m_bloqueCaramelos.nuevoBloque();
+
+	for (int x = 0; x < m_tablero.getWidth(); x++)
+	{
+		for (int y = 0; y < m_tablero.getHeight(); y++)
+		{
+			Candy* actual = m_tablero.getCell(x, y);
+			if (actual != nullptr)
+			{
+				delete actual;
+				m_tablero.setCell(nullptr, x, y);
+			}
+		}
+	}
 }
 
 // Funcion auxiliar que convierte un tipo de caramelo a string.

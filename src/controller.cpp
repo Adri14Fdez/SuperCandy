@@ -19,9 +19,9 @@ Controller::Controller()
     m_map[DOWN] = KEYBOARD_DOWN;
     m_map[LEFT] = KEYBOARD_LEFT;
     m_map[RIGHT] = KEYBOARD_RIGHT;
-    m_map[KEY1] = KEYBOARD_Q;
-    m_map[KEY2] = KEYBOARD_W;
-    m_map[KEY3] = KEYBOARD_E;
+    m_map[KEYQ] = KEYBOARD_Q;
+    m_map[KEYW] = KEYBOARD_W;
+    m_map[KEYE] = KEYBOARD_E;
 
     // Mouse mappings are unused for keyboard-based mapping API, initialize defensively
     m_map[MOUSE_LEFT] = -1;
@@ -73,9 +73,9 @@ bool Controller::isUpPressed() const { return m_pressed[UP]; }
 bool Controller::isDownPressed() const { return m_pressed[DOWN]; }
 bool Controller::isLeftPressed() const { return m_pressed[LEFT]; }
 bool Controller::isRightPressed() const { return m_pressed[RIGHT]; }
-bool Controller::isKey1Pressed() const { return m_pressed[KEY1]; }
-bool Controller::isKey2Pressed() const { return m_pressed[KEY2]; }
-bool Controller::isKey3Pressed() const { return m_pressed[KEY3]; }
+bool Controller::isKeyQPressed() const { return m_pressed[KEYQ]; }
+bool Controller::isKeyWPressed() const { return m_pressed[KEYW]; }
+bool Controller::isKeyEPressed() const { return m_pressed[KEYE]; }
 
 int Controller::getMouseX() const { return mouseX; }
 int Controller::getMouseY() const { return mouseY; }

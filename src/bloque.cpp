@@ -100,7 +100,7 @@ void Bloque::moverDer(const Controller& controller, const Board& tablero, int li
 
 void Bloque::rotarCaramelos(const Controller& controller)
 {
-    if (controller.isKey1Pressed())
+    if (controller.isKeyQPressed())
     {
         Candy* aux = m_bloqueCaramelos[0];
         m_bloqueCaramelos[0] = m_bloqueCaramelos[1];

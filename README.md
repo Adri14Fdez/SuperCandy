@@ -1,4 +1,6 @@
-# Práctica de Programación 2 - UAB, Grado Ingeniería Informática, 107890
+<p align="center">
+  <img width="200" src="./data/img/logo_small.png" alt="SuperCandy"/>
+</p>
 
 # Ayuda primera ejecución
 
@@ -37,7 +39,6 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 
 # TAREAS PENDIENTES
 
-## OBLIGATORIO
 - [X] Generación aleatoria de piezas de bloqueCaramelo.
 - [X] Hacer condicion Game Over.
 - [X] Metodos de guardar y cargar partida.
@@ -45,11 +46,9 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [X] Cargar partida desde fichero.
 - [X] Tests de la clase Game.
 - [X] Identificar lo de los conceptos nuevos aprendidos. 
-
-## EXTRA
 - [X] Estadistica de caramelos rotos. 
 - [X] Mecanismo de pausa.
+- [X] Añadir notificacion para cuando se guarda o carga una partida.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
 - [ ] Sistema puntuacion avanzada (combos, patrones, etc). (No se puede porque el explodeAndDrop() no puede ser modificado añadiendole parametros)
-- [X] Añadir notificacion para cuando se guarda o carga una partida.
