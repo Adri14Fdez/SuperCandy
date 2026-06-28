@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="600" src="./data/img/banner.png" alt="SuperCandy"/>
+  <img width="700" src="./data/img/banner.png" alt="SuperCandy"/>
 </p>
 
 # Ayuda primera ejecución
