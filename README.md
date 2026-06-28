@@ -52,3 +52,4 @@ El binario se genera en `./build/p2_project` y puede ejecutarse directamente.
 - [ ] Mecanismo de rebobinado.
 - [ ] Caramelos especiales.
 - [ ] Sistema puntuacion avanzada (combos, patrones, etc). (No se puede porque el explodeAndDrop() no puede ser modificado añadiendole parametros)
+- [ ] Menú de pausa.
